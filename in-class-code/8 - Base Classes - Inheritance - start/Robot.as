@@ -12,23 +12,32 @@
 		public function Robot() {
 			// constructor code
 			
-			addEventListener(Event.ENTER_FRAME, myEnterFrame);
 			
 			//WANT TO INITIALIZE NUMERICAL VARS!
 			shakiness = 10;
+			ox = 0;
+			oy = 0;
 			
 			addEventListener(Event.ADDED_TO_STAGE, myAdded);
-			addEventListener(Event.REMOVED_FROM_STAGE, myRemoved);
 		}
 		
 		function myAdded(e:Event) {
 			ox = x;
 			oy = y;
+			addEventListener(Event.ENTER_FRAME, myEnterFrame);
+			addEventListener(Event.REMOVED_FROM_STAGE, myRemoved);
+			addEventListener(MouseEvent.CLICK, myClicked);
 		}
 		
 		function myRemoved(e:Event) {
 			removeEventListener(Event.ENTER_FRAME, myEnterFrame);
+			removeEventListener(MouseEvent.CLICK, myClicked);
 		}
+		
+		function myClicked(e:MouseEvent) {
+			trace("robot clicked");
+		}
+		
 		
 		function myEnterFrame(e:Event) {
 			trace("robot enter frame");
