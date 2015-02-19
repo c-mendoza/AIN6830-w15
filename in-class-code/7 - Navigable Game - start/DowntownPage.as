@@ -89,7 +89,6 @@
 				theGame.player.x = 0;
 				theGame.addChild(nextPage);
 				theGame.removeChild(this);
-
 			}
 		}
 

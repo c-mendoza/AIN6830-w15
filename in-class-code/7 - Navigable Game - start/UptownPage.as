@@ -22,8 +22,6 @@
 		
 		function setGame(aGame:MainNavigableGame) {
 			theGame = aGame;
-			
-						
 			theGame.player.y = 300;
 			theGame.player.scaleX = 0.3;
 			theGame.player.scaleY = 0.3;
@@ -79,6 +77,12 @@
 			if(theGame.player.x < 0) {
 				//we do something
 				theGame.player.x = 0;
+				var nextPage = new DowntownPage;
+				removeChild(theGame.player);
+				nextPage.setGame(theGame);
+				theGame.addChild(nextPage);
+				theGame.player.x = stage.stageWidth;
+				parent.removeChild(this);
 			} else if(theGame.player.x > stage.stageWidth) {
 				//Something...
 				trace("Exit right!");
