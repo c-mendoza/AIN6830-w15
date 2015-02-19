@@ -99,13 +99,19 @@
 				theGame.removeChild(this);
 			}
 
-			if ( hatBuilding.hitTestPoint(theGame.player.x, theGame.player.y) )  {
-					if (upArrowDown == true) {
-						trace("We go get hats!");
-					}
+			if (hatBuilding.hitTestPoint(theGame.player.x, theGame.player.y)) {
+				if (upArrowDown == true) {
+					var nextPage = new HatPage;
+					removeChild(theGame.player);
+					nextPage.setGame(theGame);
+					theGame.player.x = 0;
+					theGame.player.y = 450;
+					theGame.addChild(nextPage);
+					theGame.removeChild(this);
 				}
-
 			}
 
 		}
+
 	}
+}

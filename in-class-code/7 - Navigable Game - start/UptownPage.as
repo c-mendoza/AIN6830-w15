@@ -87,6 +87,7 @@
 				trace("Exit right!");
 				
 			}
+			
 		}
 		
 	}
