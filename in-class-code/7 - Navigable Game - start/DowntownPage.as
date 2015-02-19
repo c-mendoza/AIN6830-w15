@@ -8,7 +8,7 @@
 
 		var vx;
 		var theGame: MainNavigableGame;
-		var upArrowDown:Boolean;
+		var upArrowDown: Boolean;
 
 		public function DowntownPage() {
 			// constructor code
@@ -59,9 +59,8 @@
 			if (e.keyCode == Keyboard.RIGHT) {
 				vx = 0;
 			}
-			
 			if (e.keyCode == Keyboard.UP) {
-				upArrowDown = false;
+				upArrowDown = true;
 			}
 		}
 
@@ -74,7 +73,7 @@
 			if (e.keyCode == Keyboard.RIGHT) {
 				vx = 5;
 			}
-			
+
 			if (e.keyCode == Keyboard.UP) {
 				upArrowDown = true;
 			}
@@ -99,7 +98,14 @@
 				theGame.addChild(nextPage);
 				theGame.removeChild(this);
 			}
-		}
 
+			if ( hatBuilding.hitTestPoint(theGame.player.x, theGame.player.y) )  {
+					if (upArrowDown == true) {
+						trace("We go get hats!");
+					}
+				}
+
+			}
+
+		}
 	}
-}
