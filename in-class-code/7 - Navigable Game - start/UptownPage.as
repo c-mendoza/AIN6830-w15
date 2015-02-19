@@ -15,7 +15,6 @@
 
 			addEventListener(Event.ADDED_TO_STAGE, myAddedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, myRemovedFromStage);
-
 			vx = 0;
 
 		}

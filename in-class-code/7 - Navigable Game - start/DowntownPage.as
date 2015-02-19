@@ -8,6 +8,7 @@
 
 		var vx;
 		var theGame: MainNavigableGame;
+		var upArrowDown:Boolean;
 
 		public function DowntownPage() {
 			// constructor code
@@ -58,6 +59,10 @@
 			if (e.keyCode == Keyboard.RIGHT) {
 				vx = 0;
 			}
+			
+			if (e.keyCode == Keyboard.UP) {
+				upArrowDown = false;
+			}
 		}
 
 		function myKeyDown(e: KeyboardEvent) {
@@ -68,6 +73,10 @@
 
 			if (e.keyCode == Keyboard.RIGHT) {
 				vx = 5;
+			}
+			
+			if (e.keyCode == Keyboard.UP) {
+				upArrowDown = true;
 			}
 		}
 
