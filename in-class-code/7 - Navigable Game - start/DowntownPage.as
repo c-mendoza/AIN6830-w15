@@ -7,8 +7,8 @@
 	public class DowntownPage extends MovieClip {
 
 		var vx;
-		var theGame:MainNavigableGame;
-		
+		var theGame: MainNavigableGame;
+
 		public function DowntownPage() {
 			// constructor code
 			trace("Downtown Page Constructor");
@@ -19,18 +19,18 @@
 			vx = 0;
 
 		}
-		
-		function setGame(aGame:MainNavigableGame) {
+
+		function setGame(aGame: MainNavigableGame) {
 			theGame = aGame;
-			
-						
+
+
 			theGame.player.y = 300;
 			theGame.player.x = 590;
 			theGame.player.scaleX = 0.3;
 			theGame.player.scaleY = 0.3;
-			
+
 			addChild(theGame.player);
-			
+
 			trace("The game in DowntownPage:", theGame);
 		}
 
@@ -40,8 +40,8 @@
 			stage.addEventListener(KeyboardEvent.KEY_UP, myKeyUp);
 			addEventListener(Event.ENTER_FRAME, myEnterFrame);
 		}
-		
-		function myRemovedFromStage(e:Event) {
+
+		function myRemovedFromStage(e: Event) {
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, myKeyDown);
 			stage.removeEventListener(KeyboardEvent.KEY_UP, myKeyUp);
 			removeEventListener(Event.ENTER_FRAME, myEnterFrame);
@@ -70,17 +70,17 @@
 				vx = 5;
 			}
 		}
-		
+
 		//vx -5;
 		//x is 1
 		function myEnterFrame(e: Event) {
 			/*trace("DP - Enter Frame");*/
 			theGame.player.x = theGame.player.x + vx;
-			
-			if(theGame.player.x < 0) {
+
+			if (theGame.player.x < 0) {
 				//we do something
 				theGame.player.x = 0;
-			} else if(theGame.player.x > stage.stageWidth) {
+			} else if (theGame.player.x > stage.stageWidth) {
 				//Something...
 				trace("Exit right!");
 				var nextPage = new UptownPage;
@@ -88,30 +88,10 @@
 				nextPage.setGame(theGame);
 				theGame.player.x = 0;
 				theGame.addChild(nextPage);
-			
-				parent.removeChild(this);	
-				
+				theGame.removeChild(this);
+
 			}
 		}
-		
+
 	}
-	
-	
-	
-	
-	
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
