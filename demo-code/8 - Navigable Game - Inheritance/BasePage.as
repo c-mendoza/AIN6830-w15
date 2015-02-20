@@ -7,7 +7,7 @@
 	public class BasePage extends MovieClip {
 
 		//Variables that are common to anyone that should behave like a BasePage
-		//go here:
+		//go here: //test
 		var theGame: MainNGInheritance;
 		var vx;
 
