@@ -15,7 +15,7 @@
 			trace("ShakingMovieClip Constructor");
 
 			//WANT TO INITIALIZE NUMERICAL VARS!
-			shakiness = 50;
+			shakiness = 4;
 			ox = 0;
 			oy = 0;
 
@@ -48,14 +48,14 @@
 		}
 
 		function setShaking(shake:Boolean) {
-			if (shake) {
-				isShaking = false;
-				x = ox;
-				y = oy;
-			} else {
+			if (shake == true) {
 				isShaking = true;
 				ox = x;
 				oy = y;
+			} else {
+				isShaking = false;
+				x = ox;
+				y = oy;
 			}
 		}
 

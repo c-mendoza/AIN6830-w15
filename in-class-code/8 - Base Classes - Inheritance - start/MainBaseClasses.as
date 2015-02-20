@@ -8,7 +8,7 @@
 		
 		public function MainBaseClasses() {
 			// constructor code
-			robot1.shakiness =  30;
+			robot1.shakiness =  5;
 		}
 	}
 	
