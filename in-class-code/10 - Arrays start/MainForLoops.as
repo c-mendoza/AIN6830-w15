@@ -13,19 +13,19 @@
 			var myMc: Block;
 			
 			trace("here");
-			//while (yCounter < 10) {
+			while (yCounter < 10) {
 				while (counter < 10) {
 					myMc = new Block;
 					myMc.x = 50 + (counter * (myMc.width + 10));
-					myMc.y = stage.stageHeight / 2;
+					myMc.y = 50 + (yCounter * (myMc.height + 10));
 					addChild(myMc);
 					counter = counter + 1;
 					trace(counter);
 				}
-				
-	/*			yCounter++;
-				trace(yCounter);
-			}*/
+				counter = 0;
+				yCounter++;
+				trace("yCounter", yCounter);
+			}
 
 		}
 	}
