@@ -10,15 +10,15 @@
 			
 			var counter = 0;
 				
-			var bar:Bar;
+			var myMc:Block;
 			
 			while(counter < 10) {
-				bar = new Bar;
+				myMc = new Block;
 				
-				bar.x = 50;
-				bar.y =  stage.stageHeight / 2;
+				myMc.x = 50 + (counter * myMc.width);
+				myMc.y =  stage.stageHeight / 2;
 				
-				addChild(bar);
+				addChild(myMc);
 				
 				counter = counter + 1;
 				trace(counter);
