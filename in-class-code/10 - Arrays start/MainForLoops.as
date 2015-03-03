@@ -40,24 +40,14 @@
 			}*/
 
 			var myBar: Bar;
-			for (var xCounter = 0; xCounter < 5; xCounter = xCounter + 1) {
+			
+			for (var xCounter = 0; xCounter < 15; xCounter = xCounter + 1) {
 				myBar = new Bar;
 				myBar.x = 50 + (xCounter * (myBar.width + 10));
+				myBar.phase = myBar.phase + (xCounter * 0.3);
 				myBar.y = stage.stageHeight / 2;
 				addChild(myBar);
 			}
-
-
-
-
-
-
-
-
-
-
-
-
 
 		}
 	}
