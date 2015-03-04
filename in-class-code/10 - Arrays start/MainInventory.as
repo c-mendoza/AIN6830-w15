@@ -13,6 +13,15 @@
 		public function MainInventory() {
 			trace("MainInventory");
 			inventory = new Array;
+			
+		}
+		
+		public function addToInventory(item: MovieClip) {
+			
+		}
+		
+		public function removeFromInventory(item: MovieClip) {
+			
 		}
 	}
 	
