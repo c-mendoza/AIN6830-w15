@@ -44,6 +44,8 @@
 			item.x = inventoryX + sumWidths;
 			item.y = inventoryY;
 			
+			item.isInInventory = true;
+			
 			inventory.push(item);
 			
 			
@@ -70,7 +72,8 @@
 			item.x = Math.random() * stage.stageWidth;
 			
 			item.y = inventoryY + (Math.random() * (stage.stageHeight - inventoryY));
-			
+
+			item.isInInventory = false;
 			
 			for(var j = i; j < inventory.length; j++) {
 				var thisItem:MovieClip = inventory[j];

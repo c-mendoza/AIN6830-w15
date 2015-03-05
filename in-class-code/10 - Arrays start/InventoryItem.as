@@ -1,29 +1,31 @@
 ﻿package  {
 	
 	import flash.display.MovieClip;
-	import flash.events.*;
+	import flash.events.MouseEvent;
+	
 	
 	public class InventoryItem extends MovieClip {
 		
-		var inInventory:Boolean;
-		var xBefore:Number;
-		var yBefore:Number;
+		var isInInventory:Boolean = false;
 		
 		public function InventoryItem() {
 			// constructor code
-			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
-			inInventory = false;
+			
+			addEventListener(MouseEvent.CLICK, onClicked);
 		}
 		
-		function addedToStage(e:Event) {
-			addEventListener(MouseEvent.CLICK, clicked);
-		}
-		
-		function clicked(e:MouseEvent) {
-
-			var inventory =  this.parent as MainInventory;
-
-			inventory.inventoryItemClicked(this);
+		public function onClicked(e:MouseEvent) {
+			trace("Clicked!");
+			
+			var mainInventory:MainInventory = parent as MainInventory;			
+			
+			if(isInInventory == false) {
+				mainInventory.addToInventory(this);
+			} else {
+				mainInventory.removeFromInventory(this);
+			}
+			
+			
 		}
 	}
 	
