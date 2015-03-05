@@ -14,6 +14,7 @@
 			trace("MainInventory");
 			inventory = new Array;
 			
+			trace(theBanana);
 		}
 		
 		public function addToInventory(item: MovieClip) {
