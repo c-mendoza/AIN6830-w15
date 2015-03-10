@@ -9,6 +9,8 @@
 		var playerAccel: Number = 1; //Player acceleration
 		var playerVx: Number; //Player x velocity
 
+		var enemies:Array = new Array;
+		
 		var leftArrowDown: Boolean = false;
 		var rightArrowDown: Boolean = false;
 		var spacebarDown: Boolean = false;
@@ -27,7 +29,21 @@
 			player.y = 340;
 			playerVx = 0;
 
-
+			
+			for (var yCount = 0; yCount < 5; yCount++) {
+				
+				for (var xCount = 0; xCount < 10; xCount++) {
+					var enemy = new Invader1;
+					
+					enemies.push(enemy);
+					
+					addChild(enemy);
+					
+					enemy.x = 30 + ( (enemy.width + 10) * xCount);
+					enemy.y = 30 + ( (enemy.height + 20) * yCount);
+				}
+				
+			}
 
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
@@ -77,9 +93,9 @@
 			player.x += playerVx;
 			player.x = Math.round(player.x);
 
-			playerVx *= 0.7; //"Friction"
+			playerVx = playerVx * 0.5; //"Friction"
 
-			if (Math.abs(playerVx) < 0.1) {
+			if (Math.abs(playerVx) < 0.3) {
 				playerVx = 0;
 			}
 
