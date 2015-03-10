@@ -38,9 +38,16 @@
 					enemies.push(enemy);
 					
 					addChild(enemy);
+					enemy.scaleX = 3;
+					enemy.scaleY = 3;
 					
-					enemy.x = 30 + ( (enemy.width + 10) * xCount);
+					enemy.stop();
+					
+					var rowOffset = (stage.stageWidth - ((enemy.width + 10) * 10)) / 2;
+					enemy.x = rowOffset + ( (enemy.width + 10) * xCount);
 					enemy.y = 30 + ( (enemy.height + 20) * yCount);
+					
+
 				}
 				
 			}
