@@ -29,11 +29,17 @@
 			player.y = 340;
 			playerVx = 0;
 
-			
+	
 			for (var yCount = 0; yCount < 5; yCount++) {
 				
 				for (var xCount = 0; xCount < 10; xCount++) {
-					var enemy = new Invader1;
+					var enemy;
+					
+					if (yCount % 2 == 0) {
+						enemy = new Invader1;
+					} else {
+						enemy = new Invader2;
+					}
 					
 					enemies.push(enemy);
 					
@@ -49,6 +55,7 @@
 					
 
 				}
+
 				
 			}
 
