@@ -1,0 +1,1 @@
+﻿package  {	import flash.display.*;	import flash.events.*;		public class Projectile extends MovieClip {		var vx:Number;		var vy:Number;				public function Projectile() {			vx = 0;			vy = -3;		}				public function update() {			x += vx;			y += vy;		}	}	}
