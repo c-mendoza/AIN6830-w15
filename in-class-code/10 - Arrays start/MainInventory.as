@@ -7,24 +7,24 @@
 
 	public class MainInventory extends MovieClip {
 
-		var inventory: Array;
+		var inventory: Array = new Array;
 		var inventoryX: Number;
 		var inventoryY: Number;
 
 		var vx;
 		var vy;
+		var accel: Number = 1.5;
 
 		var leftArrowDown: Boolean;
 		var rightArrowDown: Boolean;
 		var upArrowDown: Boolean;
 		var downArrowDown: Boolean;
-		
+
+		var fruitToCheck: Array = new Array;
 
 		public function MainInventory() {
 			trace("MainInventory");
-			inventory = new Array;
-			fruitToCheck = new Array;
-			
+
 			trace(theBanana);
 
 			inventoryX = 115;
@@ -41,13 +41,24 @@
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 			stage.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
-			
+
 
 
 		}
 
 		function enterFrameHandler(e: Event) {
-			var accel: Number = 1.5;
+
+			//Check if the player collides with
+			//the fruit in fruitToCheck
+			for (var i = 0; i < fruitToCheck.length; i++) {
+				if (fruitToCheck[i].hitTestObject(player)) {
+					trace("boom");
+					addToInventory(fruitToCheck[i]);
+					fruitToCheck.splice(i, 1);
+					i--;
+				}
+			}
+
 
 			//Update the velocity depending on whether an arrow is pressed:
 			if (rightArrowDown == true) {
@@ -57,11 +68,11 @@
 			if (leftArrowDown == true) {
 				vx -= accel;
 			}
-			
+
 			if (upArrowDown) {
-					vy -= accel;
+				vy -= accel;
 			}
-			
+
 			if (downArrowDown) {
 				vy += accel;
 			}
@@ -78,6 +89,11 @@
 
 			}
 		}
+
+		function addFruitToCheck(item: MovieClip) {
+			fruitToCheck.push(item);
+		}
+
 		public function addToInventory(item: MovieClip) {
 			//1: Calculate the x coordinate by adding all of the widths
 			//of every item in the inventory
@@ -128,6 +144,7 @@
 				thisItem.x = thisItem.x - item.width;
 			}
 
+			fruitToCheck.push(item);
 
 		}
 
@@ -140,16 +157,16 @@
 			if (e.keyCode == Keyboard.RIGHT) {
 				rightArrowDown = true;
 			}
-			
+
 			if (e.keyCode == Keyboard.UP) {
 				upArrowDown = true;
 			}
-			
+
 			if (e.keyCode == Keyboard.DOWN) {
 				downArrowDown = true;
 			}
 		}
-		
+
 
 		function keyUpHandler(e: KeyboardEvent) {
 
@@ -161,11 +178,11 @@
 			if (e.keyCode == Keyboard.RIGHT) {
 				rightArrowDown = false;
 			}
-			
+
 			if (e.keyCode == Keyboard.UP) {
 				upArrowDown = false;
 			}
-			
+
 			if (e.keyCode == Keyboard.DOWN) {
 				downArrowDown = false;
 			}

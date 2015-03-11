@@ -3,14 +3,19 @@
 	import flash.events.*;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
+	import flash.utils.Timer;
 
 	public class SpaceInvadersGame extends MovieClip {
 		var player: MovieClip;
 		var playerAccel: Number = 1; //Player acceleration
 		var playerVx: Number; //Player x velocity
 
-		var enemies:Array = new Array;
-		
+		var enemyVx: Number = 10;
+
+		var enemyTimer: Timer;
+
+		var enemies: Array = new Array;
+
 		var leftArrowDown: Boolean = false;
 		var rightArrowDown: Boolean = false;
 		var spacebarDown: Boolean = false;
@@ -29,35 +34,41 @@
 			player.y = 340;
 			playerVx = 0;
 
-	
+
 			for (var yCount = 0; yCount < 5; yCount++) {
-				
+
 				for (var xCount = 0; xCount < 10; xCount++) {
 					var enemy;
-					
+
 					if (yCount % 2 == 0) {
 						enemy = new Invader1;
 					} else {
 						enemy = new Invader2;
 					}
-					
+
 					enemies.push(enemy);
-					
+
 					addChild(enemy);
 					enemy.scaleX = 3;
 					enemy.scaleY = 3;
-					
+
 					enemy.stop();
-					
+
 					var rowOffset = (stage.stageWidth - ((enemy.width + 10) * 10)) / 2;
-					enemy.x = rowOffset + ( (enemy.width + 10) * xCount);
-					enemy.y = 30 + ( (enemy.height + 20) * yCount);
-					
+					enemy.x = rowOffset + ((enemy.width + 10) * xCount);
+					enemy.y = 30 + ((enemy.height + 20) * yCount);
+
 
 				}
 
-				
+
 			}
+
+			enemyTimer = new Timer(500);
+
+			enemyTimer.addEventListener(TimerEvent.TIMER, enemyTimerFired);
+
+			enemyTimer.start();
 
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
@@ -67,6 +78,35 @@
 
 		}
 
+		function enemyTimerFired(e: TimerEvent) {
+			trace("timer!");
+
+			var shouldChangeSpeeds: Boolean = false;
+
+			for (var count = 0; count < enemies.length; count++) {
+				var thisEnemy = enemies[count];
+				thisEnemy.x += enemyVx;
+				if (thisEnemy.x > (stage.stageWidth - thisEnemy.width) || thisEnemy.x < 0) {
+					shouldChangeSpeeds = true;
+				}
+
+				if (thisEnemy.currentFrame == thisEnemy.totalFrames) {
+					thisEnemy.gotoAndStop(1);
+				} else {
+					thisEnemy.gotoAndStop(thisEnemy.currentFrame + 1);
+				}
+				
+			}
+
+			if (shouldChangeSpeeds == true) {
+				enemyVx *= -1;
+				for (count = 0; count < enemies.length; count++) {
+					thisEnemy = enemies[count];
+					thisEnemy.y += 20;
+				}
+			}
+
+		}
 
 		//Function that handles firing a missile.
 		function fireMissile() {
@@ -75,7 +115,7 @@
 
 
 		function enterFrameHandler(e: Event) {
-			
+
 
 			//////////////////////////////////////////////
 			//Update missiles and enemies //
@@ -84,10 +124,10 @@
 
 			//////////////////////////////////////////////
 			//Update timer //
-			
+
 			//??
-			
-			
+
+
 			//////////////////////////////////////////////
 			// Firing missiles //
 
@@ -116,7 +156,7 @@
 			var pw2 = player.width / 2;
 			if (player.x < pw2) {
 				player.x = pw2;
-			} else if (player.x > stage.stageWidth - pw2 ) {
+			} else if (player.x > stage.stageWidth - pw2) {
 				player.x = stage.stageWidth - pw2;
 			}
 		}
