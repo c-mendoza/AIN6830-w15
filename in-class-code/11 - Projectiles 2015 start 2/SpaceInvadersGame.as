@@ -19,6 +19,8 @@
 		var leftArrowDown: Boolean = false;
 		var rightArrowDown: Boolean = false;
 		var spacebarDown: Boolean = false;
+		
+		var playerMissiles: Array = new Array;
 
 
 		public function SpaceInvadersGame() { // constructor code 
@@ -110,7 +112,14 @@
 
 		//Function that handles firing a missile.
 		function fireMissile() {
-
+			var myProjectile:Projectile = new Projectile;
+			
+			addChild(myProjectile);
+			
+			myProjectile.x = player.x;
+			myProjectile.y = player.y;
+			
+			playerMissiles.push(myProjectile);
 		}
 
 
@@ -119,7 +128,18 @@
 
 			//////////////////////////////////////////////
 			//Update missiles and enemies //
-
+			
+			for (var i = 0; i < playerMissiles.length; i++) {
+				
+				var currentMissile:Projectile = playerMissiles[i]
+				
+				currentMissile.update();
+				
+				if (currentMissile
+				
+				
+			}
+			
 
 
 			//////////////////////////////////////////////
@@ -131,7 +151,9 @@
 			//////////////////////////////////////////////
 			// Firing missiles //
 
-			//??
+			if (spacebarDown) {
+				fireMissile();
+			}
 
 			//////////////////////////////////////////////
 			// Player motion //
