@@ -7,9 +7,8 @@
 	//Based on code by Rex van der Spuy, originally in Foundation Game Design with Flash
 	//AIN 6830 – Winter 15 Version 1.0
 	//Cristobal Mendoza.
-	
-	public class Collision 
-	{
+
+	public class Collision {
 		public static const COLLISION_NONE: uint = 0;
 		public static const COLLISION_SIDE_LEFT: uint = 1;
 		public static const COLLISION_SIDE_RIGHT: uint = 2;
@@ -17,7 +16,7 @@
 		public static const COLLISION_SIDE_BOTTOM: uint = 4;
 
 
-		public function Collision() {} 
+		public function Collision() {}
 
 		//Check axis-aligned collisions between two DisplayObjects.
 		//Returns uint indicating the side of the collision of objectA, or 0 if no collision occurs.
@@ -56,39 +55,54 @@
 		//See the class's COLLISION_SIDE constants for possible return values.
 		static public function block(movingObject: DisplayObject, staticObject: DisplayObject): uint {
 
-			var collisionSide:uint = checkCollision(movingObject, staticObject);
+			var collisionSide = COLLISION_NONE;
 
-			var ox = 0;
-			var oy = 0;
+			var objectA_Halfwidth: Number = movingObject.width / 2;
+			var objectA_Halfheight: Number = movingObject.height / 2;
+			var objectB_Halfwidth: Number = staticObject.width / 2;
+			var objectB_Halfheight: Number = staticObject.height / 2;
+			var dx: Number = staticObject.x - movingObject.x;
+			var ox: Number = objectB_Halfwidth + objectA_Halfwidth - Math.abs(dx);
+			if (ox > 0) {
+				var dy: Number = movingObject.y - staticObject.y;
+				var oy: Number = objectB_Halfheight + objectA_Halfheight - Math.abs(dy);
+				if (oy > 0) {
+					if (ox < oy) {
+						if (dx < 0) { //Collision on right
+							oy = 0;
+							collisionSide = COLLISION_SIDE_RIGHT;
+						} else { //Collision on left
+							oy = 0;
+							ox *= -1;
+							collisionSide = COLLISION_SIDE_LEFT;
+						}
+					} else {
+						if (dy < 0) { //Collision on Top
+							ox = 0;
+							oy *= -1;
+							collisionSide = COLLISION_SIDE_TOP;
+						} else { //Collision on Bottom
+							ox = 0;
+							collisionSide = COLLISION_SIDE_BOTTOM;
+						}
+					}
+					//Use the calculated x and y overlaps to  
+					//move objectA out of the collision
+					var player = movingObject as Player;
+					player.setX(movingObject.x + ox);
+					player.setY(movingObject.y + oy);
 
-			switch (collisionSide) {
-				case COLLISION_SIDE_RIGHT:
-					oy = 0;
-					break;
-				case COLLISION_SIDE_LEFT:
-					oy = 0;
-					ox *= -1;
-					break;
-				case COLLISION_SIDE_TOP:
-					ox = 0;
-					oy *= -1;
-					break;
-				case COLLISION_SIDE_BOTTOM:
-					ox = 0;
-					break;
-
+				}
 			}
-			//Use the calculated x and y overlaps to  
-			//move objectA out of the collision
-			movingObject.x += ox;
-			movingObject.y += oy;
-			
+
+
+
 			//Return the side of the collision
 			return collisionSide;
 
 
-		} 
-		
+		}
+
 		//General purpose method for testing Axis-based collisions. Returns true or false
 		static public function test(objectA: Object, objectB: Object): Boolean {
 			var objectA_Halfwidth = objectA.width / 2;
