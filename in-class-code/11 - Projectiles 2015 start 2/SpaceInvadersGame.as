@@ -4,23 +4,26 @@
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	import flash.utils.Timer;
+	import com.friendsofed.gameElements.effects.Explosion;
 
 	public class SpaceInvadersGame extends MovieClip {
 		var player: MovieClip;
 		var playerAccel: Number = 1; //Player acceleration
 		var playerVx: Number; //Player x velocity
-
+		var playerMissiles: Array = new Array;
 		var enemyVx: Number = 10;
-
-		var enemyTimer: Timer;
-
 		var enemies: Array = new Array;
+		var enemyMissiles: Array = new Array;
+		var maxEnemyMissiles: Number = 2;
+		var enemyFireInterval: Number = 500;
+		var enemyMoveInterval: Number = 500;
+		var enemyFireTimer: Timer = new Timer(enemyFireInterval);
+		var enemyMoveTimer: Timer = new Timer(enemyMoveInterval);
+
 
 		var leftArrowDown: Boolean = false;
 		var rightArrowDown: Boolean = false;
 		var spacebarDown: Boolean = false;
-		
-		var playerMissiles: Array = new Array;
 
 
 		public function SpaceInvadersGame() { // constructor code 
@@ -38,8 +41,8 @@
 
 
 			for (var yCount = 0; yCount < 5; yCount++) {
-
 				for (var xCount = 0; xCount < 10; xCount++) {
+
 					var enemy;
 
 					if (yCount % 2 == 0) {
@@ -51,43 +54,39 @@
 					enemies.push(enemy);
 
 					addChild(enemy);
-					enemy.scaleX = 3;
-					enemy.scaleY = 3;
-
+					enemy.scaleX = 2.5;
+					enemy.scaleY = 2.5;
 					enemy.stop();
-
-					var rowOffset = (stage.stageWidth - ((enemy.width + 10) * 10)) / 2;
-					enemy.x = rowOffset + ((enemy.width + 10) * xCount);
-					enemy.y = 30 + ((enemy.height + 20) * yCount);
-
-
+					
+					var spacing = 40;
+					
+					var rowOffset = (stage.stageWidth - (spacing * 10)) / 2;
+					enemy.x = rowOffset + (spacing * xCount);
+					enemy.y = 30 + (30 * yCount);
 				}
-
-
 			}
 
-			enemyTimer = new Timer(500);
+			enemyMoveTimer.addEventListener(TimerEvent.TIMER, enemyMoveTimerFired);
+			enemyMoveTimer.start();
 
-			enemyTimer.addEventListener(TimerEvent.TIMER, enemyTimerFired);
-
-			enemyTimer.start();
+			enemyFireTimer.addEventListener(TimerEvent.TIMER, enemyFireTimerFired);
+			enemyFireTimer.start();
 
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 			stage.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
-
 			stage.focus = stage;
-
 		}
 
-		function enemyTimerFired(e: TimerEvent) {
-			trace("timer!");
+		function enemyMoveTimerFired(e: TimerEvent) {
+			//trace("timer!");
 
 			var shouldChangeSpeeds: Boolean = false;
 
 			for (var count = 0; count < enemies.length; count++) {
 				var thisEnemy = enemies[count];
 				thisEnemy.x += enemyVx;
+
 				if (thisEnemy.x > (stage.stageWidth - thisEnemy.width) || thisEnemy.x < 0) {
 					shouldChangeSpeeds = true;
 				}
@@ -97,7 +96,7 @@
 				} else {
 					thisEnemy.gotoAndStop(thisEnemy.currentFrame + 1);
 				}
-				
+
 			}
 
 			if (shouldChangeSpeeds == true) {
@@ -110,16 +109,33 @@
 
 		}
 
+		function enemyFireTimerFired(e: TimerEvent) {
+
+			if (enemyMissiles.length < maxEnemyMissiles) {
+				var index = Math.floor(Math.random() * enemies.length);
+
+				var enMissile: Projectile = new Projectile;
+				enMissile.vy = 3;
+				enMissile.x = enemies[index].x + enemies[index].width/2;
+				enMissile.y = enemies[index].y + enemies[index].height/2;
+				addChild(enMissile);
+				enemyMissiles.push(enMissile);
+			}
+		}
+
 		//Function that handles firing a missile.
 		function fireMissile() {
-			var myProjectile:Projectile = new Projectile;
-			
-			addChild(myProjectile);
-			
-			myProjectile.x = player.x;
-			myProjectile.y = player.y;
-			
-			playerMissiles.push(myProjectile);
+
+			if (playerMissiles.length < 2) {
+				var myProjectile: Projectile = new Projectile;
+
+				addChild(myProjectile);
+
+				myProjectile.x = player.x;
+				myProjectile.y = player.y;
+
+				playerMissiles.push(myProjectile);
+			}
 		}
 
 
@@ -127,19 +143,64 @@
 
 
 			//////////////////////////////////////////////
-			//Update missiles and enemies //
-			
+			//Update player missiles and enemies //
+
 			for (var i = 0; i < playerMissiles.length; i++) {
-				
-				var currentMissile:Projectile = playerMissiles[i]
-				
+
+				var currentMissile: Projectile = playerMissiles[i];
 				currentMissile.update();
-				
-				if (currentMissile
-				
-				
+
+				if (currentMissile.y < -currentMissile.height / 2) {
+
+					removeChild(currentMissile);
+					playerMissiles.splice(i, 1);
+
+				} else {
+
+					for (var j = 0; j < enemies.length; j++) {
+
+						var currentEnemy: MovieClip = enemies[j];
+
+						if (currentMissile.hitTestObject(currentEnemy) == true) {
+
+							removeChild(currentMissile);
+							removeChild(currentEnemy);
+							playerMissiles.splice(i, 1);
+							enemies.splice(j, 1);
+							
+							var exp:Explosion = new Explosion;
+							exp.x = currentEnemy.x + (currentEnemy.width/2);
+							exp.y = currentEnemy.y + (currentEnemy.height/2);
+							exp.scaleX = exp.scaleY = 1.5;
+							addChild(exp);
+						}
+					}
+				}
 			}
 			
+			//////////////////////////////////////////////
+			//Update enemy missiles //
+
+			for (i = 0; i < enemyMissiles.length; i++) {
+
+				currentMissile = enemyMissiles[i];
+				currentMissile.update();
+
+				if (currentMissile.y > stage.stageHeight + (currentMissile.height / 2)) {
+					removeChild(currentMissile);
+					enemyMissiles.splice(i, 1);
+
+				} else {
+
+					if (currentMissile.hitTestObject(player)) {
+						trace("PLAYER HIT!");
+						removeChild(currentMissile);
+						enemyMissiles.splice(i, 1);
+					}
+				}
+			}
+
+
 
 
 			//////////////////////////////////////////////
@@ -147,13 +208,6 @@
 
 			//??
 
-
-			//////////////////////////////////////////////
-			// Firing missiles //
-
-			if (spacebarDown) {
-				fireMissile();
-			}
 
 			//////////////////////////////////////////////
 			// Player motion //
@@ -205,6 +259,7 @@
 			}
 			if (e.keyCode == Keyboard.SPACE) {
 				spacebarDown = false;
+				fireMissile();
 			}
 		}
 	}
