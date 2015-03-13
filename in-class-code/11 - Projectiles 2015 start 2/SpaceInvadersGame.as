@@ -15,22 +15,20 @@
 		var enemies: Array = new Array;
 		var enemyMissiles: Array = new Array;
 		var maxEnemyMissiles: Number = 2;
-		var enemyFireInterval: Number = 500;
-		var enemyMoveInterval: Number = 500;
-		var enemyFireTimer: Timer = new Timer(enemyFireInterval);
-		var enemyMoveTimer: Timer = new Timer(enemyMoveInterval);
+		var enemyFireTimer: Timer = new Timer(500); //Let's make it interesting...
+		var enemyMoveTimer: Timer = new Timer(500);
 
-
+		//Keyboard-related variables:
 		var leftArrowDown: Boolean = false;
 		var rightArrowDown: Boolean = false;
 		var spacebarDown: Boolean = false;
 
-
 		public function SpaceInvadersGame() { // constructor code 
-
+			//Just this:
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 		}
 
+		//This will essentially be our "setup" function.
 		function addedToStage(e: Event) {
 
 			player = new Player();
@@ -57,9 +55,9 @@
 					enemy.scaleX = 2.5;
 					enemy.scaleY = 2.5;
 					enemy.stop();
-					
+
 					var spacing = 40;
-					
+
 					var rowOffset = (stage.stageWidth - (spacing * 10)) / 2;
 					enemy.x = rowOffset + (spacing * xCount);
 					enemy.y = 30 + (30 * yCount);
@@ -78,8 +76,8 @@
 			stage.focus = stage;
 		}
 
+		//Handler for the timer that tells us when the enemies should move
 		function enemyMoveTimerFired(e: TimerEvent) {
-			//trace("timer!");
 
 			var shouldChangeSpeeds: Boolean = false;
 
@@ -109,15 +107,18 @@
 
 		}
 
+		//Handler for the timer that tells us when the enemies shoot!
 		function enemyFireTimerFired(e: TimerEvent) {
 
+			//If there are less missiles than the max, then add more:
 			if (enemyMissiles.length < maxEnemyMissiles) {
+				//This gets us a random number between 0 and up to 1 - enemies.length
 				var index = Math.floor(Math.random() * enemies.length);
 
 				var enMissile: Projectile = new Projectile;
 				enMissile.vy = 3;
-				enMissile.x = enemies[index].x + enemies[index].width/2;
-				enMissile.y = enemies[index].y + enemies[index].height/2;
+				enMissile.x = enemies[index].x + enemies[index].width / 2;
+				enMissile.y = enemies[index].y + enemies[index].height / 2;
 				addChild(enMissile);
 				enemyMissiles.push(enMissile);
 			}
@@ -167,17 +168,17 @@
 							removeChild(currentEnemy);
 							playerMissiles.splice(i, 1);
 							enemies.splice(j, 1);
-							
-							var exp:Explosion = new Explosion;
-							exp.x = currentEnemy.x + (currentEnemy.width/2);
-							exp.y = currentEnemy.y + (currentEnemy.height/2);
+
+							var exp: Explosion = new Explosion;
+							exp.x = currentEnemy.x + (currentEnemy.width / 2);
+							exp.y = currentEnemy.y + (currentEnemy.height / 2);
 							exp.scaleX = exp.scaleY = 1.5;
 							addChild(exp);
 						}
 					}
 				}
 			}
-			
+
 			//////////////////////////////////////////////
 			//Update enemy missiles //
 
@@ -193,7 +194,7 @@
 				} else {
 
 					if (currentMissile.hitTestObject(player)) {
-						trace("PLAYER HIT!");
+						trace("PLAYER HIT!");   //perhaps you should do something about this...
 						removeChild(currentMissile);
 						enemyMissiles.splice(i, 1);
 					}
@@ -206,7 +207,7 @@
 			//////////////////////////////////////////////
 			//Update timer //
 
-			//??
+			//Can you make the enemies speed up as their numbers dwindle?
 
 
 			//////////////////////////////////////////////
