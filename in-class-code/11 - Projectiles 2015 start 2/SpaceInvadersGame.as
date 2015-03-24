@@ -42,7 +42,7 @@
 				for (var xCount = 0; xCount < 10; xCount++) {
 
 					var enemy;
-
+					
 					if (yCount % 2 == 0) {
 						enemy = new Invader1;
 					} else {

@@ -35,25 +35,26 @@
 		public static const ANIMATION_STATE_STOP_RIGHT: Number = 9;
 
 		//Protected properties:
-		protected var currentAnimationState: Number = -1;
-		protected var prevX: Number = 0;
-		protected var prevY: Number = 0;
-		protected var vx: Number = 0;
-		protected var vy: Number = 0;
-		protected var accelX: Number = 0;
-		protected var accelY: Number = 0;
+		public var currentAnimationState: Number = -1;
+		public var prevX: Number = 0;
+		public var prevY: Number = 0;
+		public var vx: Number = 0;
+		public var vy: Number = 0;
+		public var accelX: Number = 0;
+		public var accelY: Number = 0;
+		public var xPos: Number = 0;
+		public var yPos: Number = 0;
 
-
-
+		public var animationHolder: MovieClip;
 
 		public function Player() {
 			// constructor code
-			setAnimationState(ANIMATION_STATE_STOP_RIGHT);
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
 		}
 
 		function addedToStage(e: Event) {
+			setAnimationState(ANIMATION_STATE_STOP_RIGHT);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 			scaleX = baseScale;
@@ -66,124 +67,16 @@
 
 		//You only need to call this function from the outside
 		public function update() {
-			updatePosition();
+
 			processKeyboard();
+			updatePosition();
 			updateAnimationState();
 
-		}
-		
-		public function processKeyboard() {
-			if (rightArrowDown == true) {
-				accelX = accelerationX;
-			}
 
-			if (leftArrowDown == true) {
-				accelX = -accelerationX;
-			}
-
-			if (leftArrowDown == true && rightArrowDown == true) {
-				accelX = 0;
-			}
-			if (leftArrowDown == false && rightArrowDown == false) {
-				accelX = 0;
-			}
-
-			if (upArrowDown == true) {
-				accelY = -accelerationY;
-			}
-
-			if (downArrowDown == true) {
-				accelY = accelerationY;
-			}
-
-			if (upArrowDown == true && downArrowDown == true) {
-				accelY = 0;
-			}
-			if (upArrowDown == false && downArrowDown == false) {
-				accelY = 0;
-			}
 		}
 
-		public function updatePosition() {
-			prevX = x;
-			prevY = y;
-
-			x = x + accelX + (frictionX * vx);
-			y = y + accelY + (frictionY * vy);
-
-			vx = x - prevX;
-			vy = y - prevY;
-
-			x = Math.floor(x);
-			y = Math.floor(y);
-
-			if (Math.abs(vx) < 0.3) {
-				vx = 0;
-				accelX = 0;
-			}
-
-			if (Math.abs(vy) < 0.3) {
-				vy = 0;
-				accelY = 0;
-			}
-		}
-
-		public function updateAnimationState() {
-			if (Math.abs(accelX) > Math.abs(accelY)) {
-				if (accelX > 0) {
-					setAnimationState(ANIMATION_STATE_RIGHT);
-				} else if (accelX < 0) {
-					setAnimationState(ANIMATION_STATE_LEFT);
-				} else {
-
-				}
-			} else if (Math.abs(accelX) < Math.abs(accelY)) {
-				if (accelY > 0) {
-					setAnimationState(ANIMATION_STATE_DOWN);
-				} else if (accelY < 0) {
-					setAnimationState(ANIMATION_STATE_UP);
-				} else {
-
-				}
-			} else if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-				if (currentAnimationState == ANIMATION_STATE_LEFT) {
-					setAnimationState(ANIMATION_STATE_STOP_LEFT);
-				} else if (currentAnimationState == ANIMATION_STATE_RIGHT) {
-					setAnimationState(ANIMATION_STATE_STOP_RIGHT);
-				}
-				if (currentAnimationState == ANIMATION_STATE_UP) {
-					setAnimationState(ANIMATION_STATE_STOP_UP);
-				} else if (currentAnimationState == ANIMATION_STATE_DOWN) {
-					setAnimationState(ANIMATION_STATE_STOP_DOWN);
-				}
-			}
-		}
-
-		public function setAnimationState(animationState: Number) {
-			if (animationState != currentAnimationState) {
-
-
-				if (animationState == ANIMATION_STATE_RIGHT) {
-					animateRight();
-				} else if (animationState == ANIMATION_STATE_LEFT) {
-					animateLeft();
-				} else if (animationState == ANIMATION_STATE_STOP_LEFT) {
-					animateStopLeft();
-				} else if (animationState == ANIMATION_STATE_STOP_RIGHT) {
-					animateStopRight();
-				} else if (animationState == ANIMATION_STATE_STOP_UP) {
-					animateStopUp();
-				} else if (animationState == ANIMATION_STATE_STOP_DOWN) {
-					animateStopDown();
-				} else if (animationState == ANIMATION_STATE_UP) {
-					animateUp();
-				} else if (animationState == ANIMATION_STATE_DOWN) {
-					animateDown();
-				}
-
-				currentAnimationState = animationState;
-			}
-		}
+		//You'll want to override these functions in your
+		//subclass:
 
 		public function animateRight() {
 			gotoAndPlay(2);
@@ -222,18 +115,150 @@
 
 		}
 
-		public function setX(newX:Number) {
-			x = newX;
-			prevX = x;
-			vx = 0;
-			accelX = 0;
+		///////////INTERNALS
+		//In most situations you won't need to call these functions yourself
+
+		//Processes keyboard input
+		public function processKeyboard() {
+			if (rightArrowDown == true) {
+				accelX = accelerationX;
+			}
+
+			if (leftArrowDown == true) {
+				accelX = -accelerationX;
+			}
+
+			if (leftArrowDown == true && rightArrowDown == true) {
+				accelX = 0;
+			}
+			if (leftArrowDown == false && rightArrowDown == false) {
+				accelX = 0;
+			}
+
+			if (upArrowDown == true) {
+				accelY = -accelerationY;
+			}
+
+			if (downArrowDown == true) {
+				accelY = accelerationY;
+			}
+
+			if (upArrowDown == true && downArrowDown == true) {
+				accelY = 0;
+			}
+			if (upArrowDown == false && downArrowDown == false) {
+				accelY = 0;
+			}
 		}
-		
-		public function setY(newY:Number) {
-			y = newY;
-			prevY = y;
-			vy = 0;
-			accelY = 0;
+
+		//Updates the player's position
+		public function updatePosition() {
+
+			prevX = xPos;
+			prevY = yPos;
+
+			xPos = xPos + accelX + (frictionX * vx);
+			yPos = yPos + accelY + (frictionY * vy);
+			
+			vx = xPos - prevX;
+			vy = yPos - prevY;
+			
+			if (Math.abs(vx) < 0.001) {
+				prevX = xPos;
+				accelX = 0;
+			}
+
+			if (Math.abs(vy) < 0.1) {
+				vy = 0;
+				accelY = 0;
+			}
+
+			x = Math.floor(xPos);
+			y = yPos;
+
+
+			trace("vx:", vx, "accelX:", accelX, "xpos:", xPos, "prevX:", prevX);
+
+
+		}
+
+		public function updateAnimationState() {
+			if (Math.abs(accelX) > Math.abs(accelY)) {
+				if (accelX > 0) {
+					setAnimationState(ANIMATION_STATE_RIGHT);
+				} else if (accelX < 0) {
+					setAnimationState(ANIMATION_STATE_LEFT);
+				} else {
+
+				}
+			} else if (Math.abs(accelX) < Math.abs(accelY)) {
+				if (accelY > 0) {
+					setAnimationState(ANIMATION_STATE_DOWN);
+				} else if (accelY < 0) {
+					setAnimationState(ANIMATION_STATE_UP);
+				} else {
+
+				}
+			} else if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
+				if (currentAnimationState == ANIMATION_STATE_LEFT) {
+					setAnimationState(ANIMATION_STATE_STOP_LEFT);
+				} else if (currentAnimationState == ANIMATION_STATE_RIGHT) {
+					setAnimationState(ANIMATION_STATE_STOP_RIGHT);
+				}
+				if (currentAnimationState == ANIMATION_STATE_UP) {
+					setAnimationState(ANIMATION_STATE_STOP_UP);
+				} else if (currentAnimationState == ANIMATION_STATE_DOWN) {
+					setAnimationState(ANIMATION_STATE_STOP_DOWN);
+				}
+			}
+		}
+
+		//Changes the current state of the character's animation
+		public function setAnimationState(animationState: Number) {
+			if (animationState != currentAnimationState) {
+
+
+				if (animationState == ANIMATION_STATE_RIGHT) {
+					animateRight();
+				} else if (animationState == ANIMATION_STATE_LEFT) {
+					animateLeft();
+				} else if (animationState == ANIMATION_STATE_STOP_LEFT) {
+					animateStopLeft();
+				} else if (animationState == ANIMATION_STATE_STOP_RIGHT) {
+					animateStopRight();
+				} else if (animationState == ANIMATION_STATE_STOP_UP) {
+					animateStopUp();
+				} else if (animationState == ANIMATION_STATE_STOP_DOWN) {
+					animateStopDown();
+				} else if (animationState == ANIMATION_STATE_UP) {
+					animateUp();
+				} else if (animationState == ANIMATION_STATE_DOWN) {
+					animateDown();
+				}
+
+				currentAnimationState = animationState;
+			}
+		}
+
+		public function swapAnimation(newAnimation: MovieClip) {
+			removeChild(animationHolder);
+			animationHolder = newAnimation;
+			addChild(animationHolder);
+			animationHolder.gotoAndPlay(1);
+		}
+
+		public function setX(newX: Number) {
+			//prevX = newX + vx;
+			prevX = newX;
+			xPos = newX;
+			x = xPos;
+		}
+
+		public function setY(newY: Number) {
+			//prevY = newY + vy;
+			prevY = newY;
+			yPos = newY;
+			y = yPos;
 		}
 
 		public function keyDownHandler(e: KeyboardEvent) {
@@ -279,13 +304,13 @@
 				spacebarDown = false;
 			}
 		}
-		
-		public function set baseScale(s:Number) {
+
+		public function set baseScale(s: Number) {
 			_baseScale = s;
 			scaleX = scaleY = _baseScale;
 		}
-		
-		public function get baseScale():Number {
+
+		public function get baseScale(): Number {
 			return _baseScale;
 		}
 

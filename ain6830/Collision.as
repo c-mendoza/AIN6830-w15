@@ -63,35 +63,39 @@
 			var objectB_Halfheight: Number = staticObject.height / 2;
 			var dx: Number = staticObject.x - movingObject.x;
 			var ox: Number = objectB_Halfwidth + objectA_Halfwidth - Math.abs(dx);
+			
+			var player = movingObject as Player;
+			
+
+			
 			if (ox > 0) {
-				var dy: Number = movingObject.y - staticObject.y;
+				var dy: Number = staticObject.y - movingObject.y;
 				var oy: Number = objectB_Halfheight + objectA_Halfheight - Math.abs(dy);
 				if (oy > 0) {
 					if (ox < oy) {
 						if (dx < 0) { //Collision on right
 							oy = 0;
 							collisionSide = COLLISION_SIDE_RIGHT;
+							player.setX(movingObject.x + ox);
 						} else { //Collision on left
 							oy = 0;
 							ox *= -1;
 							collisionSide = COLLISION_SIDE_LEFT;
+							player.setX(movingObject.x + ox);
 						}
 					} else {
 						if (dy < 0) { //Collision on Top
 							ox = 0;
-							oy *= -1;
 							collisionSide = COLLISION_SIDE_TOP;
+							player.setY(movingObject.y + oy);
+							
 						} else { //Collision on Bottom
 							ox = 0;
+							oy *= -1
 							collisionSide = COLLISION_SIDE_BOTTOM;
+							player.setY(movingObject.y + oy);
 						}
 					}
-					//Use the calculated x and y overlaps to  
-					//move objectA out of the collision
-					var player = movingObject as Player;
-					player.setX(movingObject.x + ox);
-					player.setY(movingObject.y + oy);
-
 				}
 			}
 
