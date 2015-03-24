@@ -75,12 +75,12 @@
 					if (ox < oy) {
 						if (dx < 0) { //Collision on right
 							oy = 0;
-							collisionSide = COLLISION_SIDE_RIGHT;
+							collisionSide = COLLISION_SIDE_LEFT;
 							player.setX(movingObject.x + ox);
 						} else { //Collision on left
 							oy = 0;
 							ox *= -1;
-							collisionSide = COLLISION_SIDE_LEFT;
+							collisionSide = COLLISION_SIDE_RIGHT;
 							player.setX(movingObject.x + ox);
 						}
 					} else {

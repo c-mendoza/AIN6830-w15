@@ -9,7 +9,7 @@
 
 		//Public Properties:
 
-		public var accelerationX: Number = 2;
+		public var accelerationX: Number = 0;
 		public var accelerationY: Number = 0;
 		public var frictionX: Number = 0.7;
 		public var frictionY: Number = 0.7;
@@ -120,6 +120,7 @@
 
 		//Processes keyboard input
 		public function processKeyboard() {
+			
 			if (rightArrowDown == true) {
 				accelX = accelerationX;
 			}
@@ -177,7 +178,7 @@
 			y = yPos;
 
 
-			trace("vx:", vx, "accelX:", accelX, "xpos:", xPos, "prevX:", prevX);
+			//trace("vx:", vx, "accelX:", accelX, "xpos:", xPos, "prevX:", prevX);
 
 
 		}
@@ -188,17 +189,13 @@
 					setAnimationState(ANIMATION_STATE_RIGHT);
 				} else if (accelX < 0) {
 					setAnimationState(ANIMATION_STATE_LEFT);
-				} else {
-
-				}
+				} 
 			} else if (Math.abs(accelX) < Math.abs(accelY)) {
 				if (accelY > 0) {
 					setAnimationState(ANIMATION_STATE_DOWN);
 				} else if (accelY < 0) {
 					setAnimationState(ANIMATION_STATE_UP);
-				} else {
-
-				}
+				} 
 			} else if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
 				if (currentAnimationState == ANIMATION_STATE_LEFT) {
 					setAnimationState(ANIMATION_STATE_STOP_LEFT);
