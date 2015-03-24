@@ -163,8 +163,8 @@
 			vx = xPos - prevX;
 			vy = yPos - prevY;
 			
-			if (Math.abs(vx) < 0.001) {
-				prevX = xPos;
+			if (Math.abs(vx) < 0.1) {
+				vx = 0;
 				accelX = 0;
 			}
 
@@ -173,7 +173,7 @@
 				accelY = 0;
 			}
 
-			x = Math.floor(xPos);
+			x = xPos;
 			y = yPos;
 
 
@@ -251,6 +251,7 @@
 			//prevX = newX + vx;
 			prevX = newX;
 			xPos = newX;
+			vx = 0;
 			x = xPos;
 		}
 
@@ -258,6 +259,7 @@
 			//prevY = newY + vy;
 			prevY = newY;
 			yPos = newY;
+			vy = 0;
 			y = yPos;
 		}
 
