@@ -17,11 +17,11 @@
 
 
 		//Keyboard variables:
-		var leftArrowDown: Boolean = false;
-		var rightArrowDown: Boolean = false;
-		var upArrowDown: Boolean = false;
-		var downArrowDown: Boolean = false;
-		var spacebarDown: Boolean = false;
+		public var leftArrowDown: Boolean = false;
+		public var rightArrowDown: Boolean = false;
+		public var upArrowDown: Boolean = false;
+		public var downArrowDown: Boolean = false;
+		public var spacebarDown: Boolean = false;
 
 		//Public constants:
 		public static const ANIMATION_STATE_UP: Number = 1;
