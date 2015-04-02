@@ -1,19 +1,18 @@
 ﻿package ain6830 {
 
 	import flash.display.MovieClip;
-	import flash.events.*;
 	import flash.ui.Keyboard;
-
+	
 	import ain6830.Player;
 
-	public class JumpingPlayer extends Player {
+	public class PlatformPlayer extends Player {
 
-		public var animationRight: MovieClip;
-		public var animationUp: MovieClip;
-		public var animationDown: MovieClip;
-		public var animationStopRight: MovieClip;
-		public var animationStopDown: MovieClip;
-		public var animationStopUp: MovieClip;
+		public var animationRight: MovieClip = new MovieClip();
+		public var animationUp: MovieClip = new MovieClip();
+		public var animationDown: MovieClip = new MovieClip();
+		public var animationStopRight: MovieClip = new MovieClip();
+		public var animationStopDown: MovieClip = new MovieClip();
+		public var animationStopUp: MovieClip = new MovieClip();
 
 		public var forceX: Number = 0;
 		public var forceY: Number = 0;
@@ -28,16 +27,10 @@
 
 		private var jumpLock: Boolean = false;
 
-		public function JumpingPlayer() {
+		public function PlatformPlayer() {
 			// constructor code
 
 			accelerationY = 0;
-			animationRight = new LinkAnimationRight;
-			animationUp = new LinkAnimationUp;
-			animationDown = new LinkAnimationDown;
-			animationStopDown = new LinkAnimationStopDown;
-			animationStopUp = new LinkAnimationStopUp;
-			animationStopRight = new LinkAnimationStopRight;
 
 			animationHolder = animationRight;
 			addChild(animationHolder);

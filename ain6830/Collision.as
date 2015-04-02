@@ -102,7 +102,7 @@
 			return collisionSide;
 		}
 		
-		static public function playerAndPlatform(player:JumpingPlayer, platform:Platform) {
+		static public function playerAndPlatform(player:PlatformPlayer, platform:Platform) {
 			
 			var collisionSide = COLLISION_NONE;
 

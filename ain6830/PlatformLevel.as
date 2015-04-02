@@ -17,7 +17,7 @@
 			game.player.inAir = true;
 			
 			for (var i = 0; i < platforms.length; i++) {
-				Collision.playerAndPlatform(game.player as JumpingPlayer, platforms[i]);
+				Collision.playerAndPlatform(game.player as PlatformPlayer, platforms[i]);
 			}
 		}
 		
