@@ -1,7 +1,8 @@
 ﻿package ain6830 {
 
 	import flash.display.MovieClip;
-	import flash.events.*;
+	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 
 
@@ -312,6 +313,14 @@
 		public function get baseScale(): Number {
 			return _baseScale;
 		}
+		
+//		override public function set x(newX:Number): void {
+//			setX(newX);
+//		}
+//		
+//		override public function set y(newY:Number): void {
+//			setY(newY);
+//		}
 
 	}
 

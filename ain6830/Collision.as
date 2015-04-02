@@ -98,13 +98,61 @@
 					}
 				}
 			}
-
-
-
 			//Return the side of the collision
 			return collisionSide;
+		}
+		
+		static public function playerAndPlatform(player:JumpingPlayer, platform:Platform) {
+			
+			var collisionSide = COLLISION_NONE;
 
+			var objectA_Halfwidth: Number = player.width / 2;
+			var objectA_Halfheight: Number = player.height / 2;
+			var objectB_Halfwidth: Number = platform.width / 2;
+			var objectB_Halfheight: Number = platform.height / 2;
+			var dx: Number = platform.x - player.x;
+			var ox: Number = objectB_Halfwidth + objectA_Halfwidth - Math.abs(dx);
 
+			
+			if (ox > 0) {
+				var dy: Number = platform.y - player.y;
+				var oy: Number = objectB_Halfheight + objectA_Halfheight - Math.abs(dy);
+				if (oy > 0) {
+					if (ox < oy) {
+						if (dx < 0) { //Collision on right
+							oy = 0;
+							collisionSide = COLLISION_SIDE_LEFT;
+							player.setX(player.x + ox);
+							player.addForceX(-player.forceX);
+						} else { //Collision on left
+							oy = 0;
+							ox *= -1;
+							collisionSide = COLLISION_SIDE_RIGHT;
+							player.setX(player.x + ox);
+							player.addForceX(-player.forceX);
+						}
+					} else {
+						if (dy < 0) { //Collision on Top
+							ox = 0;
+							collisionSide = COLLISION_SIDE_TOP;
+							player.setY(player.y + oy);
+							player.addForceY(-player.forceY);
+						} else { //Collision on Bottom
+							if(player.vy > 0) {
+							ox = 0;
+							oy *= -1;
+							collisionSide = COLLISION_SIDE_BOTTOM;
+							player.setY(player.y + oy);
+							player.addForceY(-player.forceY);
+							player.canJump = true;
+							player.inAir = false;
+							}
+						}
+					}
+				}
+			}
+			//Return the side of the collision
+			return collisionSide;
 		}
 
 		//General purpose method for testing Axis-based collisions. Returns true or false
