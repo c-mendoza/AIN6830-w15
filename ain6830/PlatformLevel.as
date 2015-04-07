@@ -11,9 +11,9 @@
 		override public function update() {
 			super.update();
 			
-			trace(game.player.inAir);
-			game.player.update();
 			
+			game.player.update();
+			//trace(game.player.inAir);
 			//game.player.canJump = false;
 			//game.player.inAir = true;
 			

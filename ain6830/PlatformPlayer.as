@@ -13,6 +13,7 @@
 		public var animationStopRight: MovieClip = new MovieClip();
 		public var animationStopDown: MovieClip = new MovieClip();
 		public var animationStopUp: MovieClip = new MovieClip();
+		public var animationJump: MovieClip = new MovieClip();
 
 		public var forceX: Number = 0;
 		public var forceY: Number = 0;
@@ -32,6 +33,41 @@
 
 			accelerationY = 0;
 
+			registerAnimationState("ANIMATION_STATE_JUMP_RIGHT", function():Boolean {
+				//trace("inAir in anon", inAir, vy);
+				if(inAir == true && directionX == 1) {
+					return true;
+				}
+				return false;
+			}, function() {
+				swapAnimation(animationJump);
+				scaleX = baseScale;
+			});
+			
+			registerAnimationState("ANIMATION_STATE_JUMP_LEFT", function():Boolean {
+				//trace("inAir in anon", inAir, vy);
+				if(inAir == true && directionX == -1) {
+					return true;
+				}
+				return false;
+			}, function() {
+				swapAnimation(animationJump);
+				scaleX = -baseScale;
+			});
+			
+			unregisterAnimationState(ANIMATION_STATE_DOWN);
+			unregisterAnimationState(ANIMATION_STATE_STOP_DOWN);
+			unregisterAnimationState(ANIMATION_STATE_UP);
+			unregisterAnimationState(ANIMATION_STATE_STOP_UP);
+//			registerAnimationState(ANIMATION_STATE_STOP, function():Boolean {
+//				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0 && inAir == false) {
+//					return true;
+//				}
+//				return false;
+//			}, function() {
+//				swapAnimation(animationStopRight);
+//			});
+				
 			animationHolder = animationRight;
 			addChild(animationHolder);
 		}
@@ -54,6 +90,7 @@
 					addForceY(jumpForce);
 					canJump = false;
 					jumpLock = true;
+					inAir = true;
 				}
 			}
 		}
@@ -69,8 +106,11 @@
 			if (Math.abs(forceX) < 0.1) {
 				forceX = 0;
 			}
-			if (Math.abs(forceY) < 0.1) {
+			if (Math.abs(forceY) < 0.2) {
 				forceY = 0;
+				inAir = false;
+			} else if (Math.abs(forceY) > 2){
+				inAir = true;
 			}
 
 			//"Drain" the forceAdds:
