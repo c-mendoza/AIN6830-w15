@@ -15,7 +15,20 @@
 		public function Game() {
 			// constructor code
 		}
-
+		
+		/**
+		 * Convenience function that loads the next level.
+		 * @param nextLevel Level to load.
+		 * @param playerX sets the x position of the Player in the level to be loaded.
+		 * @param playerY sets the y position of the Player in the level to be loaded.
+		 * @return nothing.
+		 */		
+		public function loadNextLevel(nextLevel: Level, playerX: Number, playerY: Number):void {
+			currentLevel = nextLevel;
+			player.setX(playerX);
+			player.setY(playerY);
+		}
+		
 		public function get currentLevel(): Level {
 			return _currentLevel;
 		}
@@ -30,8 +43,7 @@
 			} else {
 				_currentLevel = l;
 				_currentLevel.game = this;				
-				addChild(_currentLevel);
-				
+				addChild(_currentLevel);		
 			}
 		}
 

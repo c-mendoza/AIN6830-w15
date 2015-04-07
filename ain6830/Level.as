@@ -6,6 +6,18 @@
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
 
+	/**
+	 * The Level class provides the basic behavior of a level. This class is not meant to be used directly,
+	 * rather it is meant to be subclassed by your own levels, or be used by the Level subclasses provided to you in
+	 * this package (PlatformLevel and TopDownLevel).
+	 * 
+	 * Your subclasses should at least override the update() function, which will let you
+	 * attach custop behavior to your Level subclasses. The setup() function may be overriden to provide
+	 * custom initialization instructions. The setup() function is called when the game is set
+	 * While the enterFrame() function is public, you should not need to override it. 
+	 * @author cmendoza
+	 * 
+	 */
 	public class Level extends MovieClip {
 		public var levelName: String = "default";
 		public var levelDescription: String = "none";
@@ -24,7 +36,7 @@
 		public static var TRIGGER_AREA_ENTERED: String = "TRIGGER_AREA_ENTERED";
 		
 		
-		public var isPaused: Boolean = false;
+		private var _isPaused: Boolean = false;
 
 		//add a pause feature
 
@@ -145,10 +157,6 @@
 		 */		
 		public function addTriggerArea(triggerArea: DisplayObject) {
 			triggerAreas.push(triggerArea);
-//			triggerArea.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
-//				//removeTriggerArea(triggerArea, false);
-//			});
-
 		}
 		
 		/**
@@ -228,6 +236,19 @@
 		public function set xScrollMaxSpeed(value:Number):void
 		{
 			_xScrollMaxSpeed = Math.abs(value);
+		}
+
+		public function get isPaused():Boolean
+		{
+			return _isPaused;
+		}
+
+		public function set isPaused(value:Boolean):void
+		{
+			_isPaused = value;
+			if(_isPaused) {
+				game.player.animationHolder.stop();
+			}
 		}
 		
 
