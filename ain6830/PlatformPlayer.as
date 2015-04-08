@@ -27,13 +27,47 @@
 		public var inAir: Boolean = false;
 
 		private var jumpLock: Boolean = false;
+		
+		public static const ANIMATION_STATE_JUMP_RIGHT: String = "ANIMATION_STATE_JUMP_RIGHT";
+		public static const ANIMATION_STATE_JUMP_LEFT: String = "ANIMATION_STATE_JUMP_LEFT";
 
 		public function PlatformPlayer() {
 			// constructor code
 
 			accelerationY = 0;
-
-			registerAnimationState("ANIMATION_STATE_JUMP_RIGHT", function():Boolean {
+			registerAnimationState(ANIMATION_STATE_STOP_LEFT, function():Boolean {
+				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0 && inAir == false) {
+					if (currentAnimationState == ANIMATION_STATE_LEFT || currentAnimationState == ANIMATION_STATE_JUMP_LEFT ) {
+						return true;
+					}
+				}
+				return false;
+			}, animateStopLeft);
+			registerAnimationState(ANIMATION_STATE_STOP_RIGHT, function():Boolean {
+				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0 && inAir == false) {
+					if (currentAnimationState == ANIMATION_STATE_RIGHT || currentAnimationState == ANIMATION_STATE_JUMP_RIGHT ) {
+						return true;
+					}
+				}
+				return false;
+			}, animateStopRight);
+			
+			registerAnimationState(ANIMATION_STATE_RIGHT, function():Boolean {
+				if (Math.abs(accelX) > Math.abs(accelY) && accelX > 0 && inAir == false) {
+					return true;
+				} else {
+					return false;
+				}
+			}, animateRight);
+			registerAnimationState(ANIMATION_STATE_LEFT, function():Boolean {
+				if (Math.abs(accelX) > Math.abs(accelY) && accelX < 0 && inAir == false) {
+					return true;
+				} else {
+					return false;
+				}
+			}, animateLeft);
+			
+			registerAnimationState(ANIMATION_STATE_JUMP_RIGHT, function():Boolean {
 				//trace("inAir in anon", inAir, vy);
 				if(inAir == true && directionX == 1) {
 					return true;
@@ -44,7 +78,7 @@
 				scaleX = baseScale;
 			});
 			
-			registerAnimationState("ANIMATION_STATE_JUMP_LEFT", function():Boolean {
+			registerAnimationState(ANIMATION_STATE_JUMP_LEFT, function():Boolean {
 				//trace("inAir in anon", inAir, vy);
 				if(inAir == true && directionX == -1) {
 					return true;
@@ -59,18 +93,15 @@
 			unregisterAnimationState(ANIMATION_STATE_STOP_DOWN);
 			unregisterAnimationState(ANIMATION_STATE_UP);
 			unregisterAnimationState(ANIMATION_STATE_STOP_UP);
-//			registerAnimationState(ANIMATION_STATE_STOP, function():Boolean {
-//				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0 && inAir == false) {
-//					return true;
-//				}
-//				return false;
-//			}, function() {
-//				swapAnimation(animationStopRight);
-//			});
 				
 			animationHolder = animationRight;
 			addChild(animationHolder);
 		}
+		
+//		override public function updateAnimationState():* {
+//			super.updateAnimationState();
+//			trace(currentAnimationState);
+//		}
 
 		override public function processKeyboard() {
 			super.processKeyboard();
@@ -135,6 +166,16 @@
 
 		public function addForceX(fx: Number) {
 			forceXAdd += fx;
+		}
+		
+		override public function setX(newX:Number):* {
+			super.setX(newX);
+			forceX = 0;
+		}
+		
+		override public function setY(newY:Number):* {
+			super.setY(newY);
+			forceY = 0;
 		}
 
 		override public function animateRight() {

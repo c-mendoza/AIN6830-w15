@@ -1,21 +1,30 @@
 ﻿package ain6830 {
-
+	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
-
+	
 	/**
 	 * The Level class provides the basic behavior of a level. This class is not meant to be used directly,
 	 * rather it is meant to be subclassed by your own levels, or be used by the Level subclasses provided to you in
 	 * this package (PlatformLevel and TopDownLevel).
 	 * 
-	 * Your subclasses should at least override the update() function, which will let you
-	 * attach custop behavior to your Level subclasses. The setup() function may be overriden to provide
+	 * Your subclasses will likely override the update() function, which will let you
+	 * attach custop behavior to your Level subclasses. update() is called in Level::enterFrame().
+	 * The setup() function may be overriden to provide
 	 * custom initialization instructions. The setup() function is called when the game is set
 	 * While the enterFrame() function is public, you should not need to override it. 
+	 * 
+	 * Events:
+	 * There are three types of events, all related to trigger areas:
+	 * TRIGGER_AREA_ENTERED: Event fires when player first enters a trigger area.
+	 * TRIGGER_AREA_ACTIVE: Event fires when player is in contact with the bounding box of a trigger area.
+	 * TRIGGER_AREA_EXITED: Event fires when player leaves an active trigger area.
+	 * 
 	 * @author cmendoza
+	 * 
 	 * 
 	 */
 	public class Level extends MovieClip {
@@ -23,6 +32,14 @@
 		public var levelDescription: String = "none";
 		public var xScrollEnabled: Boolean = true;
 		public var yScrollEnabled: Boolean = true;
+		public var scrollsLeft: Boolean = true;
+		public var scrollsRight: Boolean = true;
+		public var scrollsUp: Boolean = true;
+		public var scrollsDown: Boolean = true;
+		public var limitTop: Boolean = true;
+		public var limitBottom: Boolean = true;
+		public var limitLeft: Boolean = true;
+		public var limitRight: Boolean = true;
 		public var xScrollTarget: Number = 0.3; //0 to 1. The amount of horizontal screen that the character moves before scrolling
 		public var yScrollTarget: Number = 0.5; //0 to 1. The amount of vertical screen that the character moves before scrolling
 		private var triggerAreas: Array = new Array;
@@ -32,20 +49,31 @@
 		private var isInit: Boolean = false;
 		private var _xScrollMaxSpeed: Number = 2; //Positive numbers only.
 		private var _yScrollMaxSpeed: Number = 2; 
+		private var playerPosGlobal:Point = new Point(0, 0);
 		
 		public static var TRIGGER_AREA_ENTERED: String = "TRIGGER_AREA_ENTERED";
+		public static var TRIGGER_AREA_EXITED: String = "TRIGGER_AREA_EXITED";
+		public static var TRIGGER_AREA_ACTIVE: String = "TRIGGER_AREA_ACTIVE";
 		
 		
 		private var _isPaused: Boolean = false;
-
+		
 		//add a pause feature
-
+		
 		public function Level() {
 			super();
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
 		}
-
+		
+		/**
+		 * Event handler. If you want to add your own behaviors to addedToStage you may override it,
+		 * but make sure to call the superclass implementation in your own classes. In other words, if
+		 * you override this function, call super.addedToStage(e) in your override. 
+		 * @param e
+		 * @return 
+		 * 
+		 */		
 		public function addedToStage(e: Event) {
 			if (!isInit) {
 				throw new Error("Level added to stage before setting the Game instance! Set the Game instance via the game property of the Level class. " + e.currentTarget);
@@ -53,60 +81,114 @@
 			addEventListener(Event.ENTER_FRAME, enterFrame);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
-
+			
 		}
-
+		
 		public function removedFromStage(e: Event) {
 			removeEventListener(Event.ENTER_FRAME, enterFrame);
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 		}
-
+		
+		/**
+		 * Event handler. Override this function to listen to KEY_UP Events.
+		 * Default implementation does nothing. 
+		 * @param e
+		 * @return 
+		 * 
+		 */		
 		public function keyUp(e: KeyboardEvent) {}
+		
+		/**
+		 * Event handler. Override this function to listen to KEY_DOWN Events. 
+		 * Default implementation does nothing. 
+		 * @param e
+		 * @return 
+		 * 
+		 */		
 		public function keyDown(e: KeyboardEvent) {}
-
+		
+		
 		public function enterFrame(e: Event) {
 			if(!isPaused) {
+				playerPosGlobal = localToGlobal(new Point(game.player.x, game.player.y));
+				
 				update();
 				updateScroll();
+				checkLimits();
+				
 				for (var i = 0; i < triggerAreas.length; i++) {
 					if (game.player.hitTestObject(triggerAreas[i])) {
-						triggerAreas[i].dispatchEvent(new Event(TRIGGER_AREA_ENTERED));
-						//triggerActions[i]();
+						if(triggerAreas[i].isActive == false) {
+							triggerAreas[i].isActive = true;
+							triggerAreas[i].dispatchEvent(new Event(TRIGGER_AREA_ENTERED));
+							triggerAreas[i].dispatchEvent(new Event(TRIGGER_AREA_ACTIVE));
+						} else {
+							triggerAreas[i].dispatchEvent(new Event(TRIGGER_AREA_ACTIVE));
+						}
+					} else {
+						if(triggerAreas[i].isActive == true) {
+							triggerAreas[i].isActive = false;
+							triggerAreas[i].dispatchEvent(new Event(TRIGGER_AREA_EXITED));
+						}
 					}
 				}
+				
+
 			}
-
+			
 		}
-
+		
+		/**
+		 * Override this function to provide custom initialization behavior.
+		 * This function is called after the game is set, typically via changing the currentLevel in Game.
+		 * Default implementation does nothing. 
+		 * @return 
+		 * 
+		 */		
 		public function setup() {}
-
+		
 		/**
 		 * Override this function to provide custom behavior en every frame. 
+		 * Default implementation does nothing. 
 		 * @return 
 		 * 
 		 */		
 		public function update() {
 			//trace("WARNING: Level:update() should be overriden!");
 		}
-
+		
+		/**
+		 * Updates map scrolling. You should not have to call this function directly. 
+		 * @return 
+		 * 
+		 */		
 		public function updateScroll() {
 			//Player's position relative to the screen:
-			var playerPosGlobal: Point = localToGlobal(new Point(game.player.x, game.player.y));
 			
 			//Screen position normalized (position as 0..1)
 			var xScreenFraction = playerPosGlobal.x / stage.stageWidth;
 			var xDirection = 1;
 			var yDirection = 1;
-			if (xScrollEnabled) {
+			if (scrollsLeft || scrollsRight) {
 				//Only do scrolling calculation if speed is not 0:
 				if (Math.abs(game.player.vx) > 0) {
 					//If we are going left, then invert the fraction and set the xDirection to -1. That will
-					//be used to calculate whether we should invert the shift
+					//be used to calculate whether we should invert the shift.
+					
 					if (game.player.vx < 0) {
-						xScreenFraction = 1 - xScreenFraction;
-						xDirection = -1;
+						if(scrollsLeft) {
+							xScreenFraction = 1 - xScreenFraction;
+							xDirection = -1;
+						} else { //If we are not scrolling in this direction, set the fraction to 0 to inhibit scrolling
+							xScreenFraction = 0;
+						}
+					} else {
+						if(!scrollsRight) {
+							xScreenFraction = 0;
+						}
 					}
+					
 					//Limit scrolling to the "extents" of the level movie clip
 					if (x <= 0 && x >= -width + stage.stageWidth) {
 						//If the screen fraction is greater than the target, then we need to scroll
@@ -122,18 +204,26 @@
 						}
 					}
 				}
-
+				
 			}
-
+			
 			var yScreenFraction = playerPosGlobal.y / stage.stageHeight;
 			
-			if (yScrollEnabled) {
+			if (scrollsUp||scrollsDown) {
 				if (Math.abs(game.player.vy) > 0) {
 					if (game.player.vy < 0) {
-						yScreenFraction = 1 - yScreenFraction;
-						yDirection = -1;
+						if(scrollsUp) {
+							yScreenFraction = 1 - yScreenFraction;
+							yDirection = -1;
+						} else {
+							yScreenFraction = 0;
+						}
+					} else {
+						if (!scrollsDown) {
+							yScreenFraction = 0;
+						}
 					}
-
+					
 					if (y <= 0 && y >= -height + stage.stageHeight) {
 						if (yScreenFraction > yScrollTarget) {
 							var yShiftAmt = (yScreenFraction - yScrollTarget) * stage.stageHeight;
@@ -144,7 +234,7 @@
 						}
 					}
 				}
-
+				
 			}
 		}
 		/**
@@ -157,6 +247,7 @@
 		 */		
 		public function addTriggerArea(triggerArea: DisplayObject) {
 			triggerAreas.push(triggerArea);
+			(triggerArea as Object).isActive = false; //Totally cheeky cast to avoid having to create a trigger area object 
 		}
 		
 		/**
@@ -195,7 +286,40 @@
 			game.player.setY(playerY);
 		}
 		
-		////////GETTERS AND SETTERS
+		/**
+		 * Sets the scrolling capabilities of a level. 
+		 * @param up Boolean. If true, scroll is enabled when player moves up.
+		 * @param down Boolean. If true, scroll is enabled when player moves down.
+		 * @param left Boolean. If true, scroll is enabled when player moves left.
+		 * @param right Boolean. If true, scroll is enabled when player moves right.
+		 * 
+		 * You can change these capabilities during game play. For instance, upon reaching a "boss scene"
+		 * you might want to turn scrolling off. Together with Level::setScreenLimitsPlayerMovement you'll
+		 * be able to "trap" the player in the appropriate part of the map.
+		 * 
+		 */		
+		public function setScrolling(up:Boolean, down:Boolean, left:Boolean, right:Boolean):void {
+			scrollsDown = down;
+			scrollsUp = up;
+			scrollsLeft = left;
+			scrollsRight = right;
+		}
+		
+		/**
+		 * Sets the behavior of the level if the player reaches the edge of the screen. 
+		 * @param top If true, player is not allowed to move past top edge of the screen.
+		 * @param bottom If true, player is not allowed to move past bottom edge of the screen.
+		 * @param left If true, player is not allowed to move past left edge of the screen.
+		 * @param right If true, player is not allowed to move past right edge of the screen.
+		 * 
+		 */		
+		public function setScreenLimitsPlayerMovement(top:Boolean, bottom:Boolean, left:Boolean, right:Boolean):void {
+			limitTop = top;
+			limitBottom = bottom;
+			limitLeft = left;
+			limitRight = right;
+		}
+
 		
 		/**
 		 * Sets the current Game for the Level.
@@ -208,11 +332,11 @@
 			setup();
 			isInit = true;
 		}
-
+		
 		public function get game(): Game {
 			return _game;
 		}
-
+		
 		public function get yScrollMaxSpeed():Number
 		{
 			return _yScrollMaxSpeed;
@@ -237,12 +361,12 @@
 		{
 			_xScrollMaxSpeed = Math.abs(value);
 		}
-
+		
 		public function get isPaused():Boolean
 		{
 			return _isPaused;
 		}
-
+		
 		public function set isPaused(value:Boolean):void
 		{
 			_isPaused = value;
@@ -251,7 +375,38 @@
 			}
 		}
 		
-
-
+		/////////////////////INTERNALS
+		protected function checkLimits() {
+			var hw:Number = game.player.width/2;
+			var hh:Number = game.player.height/2;
+			if(limitLeft) {
+				if(playerPosGlobal.x < hw) {
+					var dx = hw - playerPosGlobal.x;
+					game.player.setX(game.player.x + dx);
+				}
+			}
+			
+			if(limitRight) {
+				if(playerPosGlobal.x > stage.stageWidth - hw) {
+					game.player.setX(game.player.x - ( playerPosGlobal.x-(stage.stageWidth-hw)));
+				}
+			}
+			
+			if(limitTop) {
+				if(playerPosGlobal.y < hh) {
+					var dy = hh - playerPosGlobal.y;
+					game.player.setY(game.player.y + dy);
+				}
+			}
+			
+			if(limitBottom) {
+				if(playerPosGlobal.y > stage.stageHeight - hh) {
+					game.player.setY(game.player.y - ( playerPosGlobal.y-(stage.stageHeight - hh)));
+				}
+			}
+		}
+		
+		
+		
 	}
 }

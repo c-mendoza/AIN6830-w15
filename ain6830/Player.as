@@ -5,7 +5,21 @@
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	
-	
+	/**
+	 * Models a generic Player. This class is not meant to be instantiated directly; it is meant to
+	 * be subclassed (see PlatformPlayer and TopDownPlayer for two implementation examples).
+	 * 
+	 * The Player class does the following things:
+	 * 1. Takes in keyboard input, which is typically used for movement and jumping.
+	 * 2. Updates the position of the Player.
+	 * 3. Sets the "animation state" of the Player. 
+	 * 
+	 * Animation states represent MovieClip animations that are added to the Player to display a particular
+	 * visual behavior. For instance, ANIMATION_STATE_LEFT applies when the player is moving towards the left,
+	 * which should trigger the display of an animation that reflects this. 
+	 * @author cmendoza
+	 * 
+	 */	
 	public class Player extends MovieClip {
 		
 		//Public Properties:
@@ -58,72 +72,6 @@
 			
 			addChild(animationHolder);
 			
-
-			registerAnimationState(ANIMATION_STATE_STOP_LEFT, function():Boolean {
-				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionX == -1) {
-						return true;
-					}
-				}
-				return false;
-			}, animateStopLeft);
-			registerAnimationState(ANIMATION_STATE_STOP_RIGHT, function():Boolean {
-				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionX == 1) {
-						return true;
-					}
-				}
-				return false;
-			}, animateStopRight);
-			registerAnimationState(ANIMATION_STATE_STOP_UP, function():Boolean {
-				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionY == -1) {
-						return true;
-					}
-				}
-				return false;
-			}, animateStopUp);
-			
-			registerAnimationState(ANIMATION_STATE_STOP_DOWN, function():Boolean {
-				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionY == 1) {
-						return true;
-					}
-				}
-				return false;
-			}, animateStopDown);
-			
-			
-			registerAnimationState(ANIMATION_STATE_RIGHT, function():Boolean {
-				if (Math.abs(accelX) > Math.abs(accelY) && accelX > 0) {
-					return true;
-				} else {
-					return false;
-				}
-			}, animateRight);
-			registerAnimationState(ANIMATION_STATE_LEFT, function():Boolean {
-				if (Math.abs(accelX) > Math.abs(accelY) && accelX < 0) {
-					return true;
-				} else {
-					return false;
-				}
-			}, animateLeft);
-			registerAnimationState(ANIMATION_STATE_DOWN, function():Boolean {
-				if (Math.abs(accelX) < Math.abs(accelY)) {
-					if (accelY > 0) {
-						return true;
-					}
-				}
-				return false;
-			}, animateDown);
-			registerAnimationState(ANIMATION_STATE_UP, function():Boolean {
-				if (Math.abs(accelX) < Math.abs(accelY)) {
-					if (accelY < 0) {
-						return true;
-					}
-				}
-				return false;
-			}, animateUp);	
 			
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
@@ -154,6 +102,11 @@
 			updatePosition();
 			updateAnimationState();
 		}
+		
+//		public function updateDrawing() {
+//			x = xPos;
+//			y = yPos;
+//		}
 		
 		//You'll want to override these functions in your
 		//subclass:
@@ -235,7 +188,7 @@
 			} else if (accelX < 0) {
 				directionX = -1;
 			}
-//			trace(directionX);
+			//			trace(directionX);
 		}
 		
 		//Updates the player's position
@@ -312,7 +265,10 @@
 		 * @param animationState The identifier (unique name) for the new animation state.
 		 * @param testFunction A function that determines whether the animation state should be used. The function should return
 		 * a boolean value. 
+		 * @param theAnimationFunction A function that is called when the animation state is active.
 		 * @return 
+		 * 
+		 * Take a look at the implementation of PlatformPlayer to see usage examples of registerAnimationState. 
 		 * 
 		 */		
 		public function registerAnimationState(animationState:String, theTestFunction:Function, theAnimationFunction:Function) {
@@ -330,21 +286,32 @@
 		}
 		/**
 		 * Updates the current animation state. Do not override this function. If you want new animation states,
-		 * use registerAnimationState to do so. 
+		 * use registerAnimationState to do so.
+		 * Note: updateAnimationState will select the first animation state whose test function returns true.
+		 * This means that while you may have a situation in which two different animation states apply, only the
+		 * one that is listed first will be used. The test order can't be guaranteed, so make sure to craft
+		 * robust test functions!  
 		 * @return 
 		 * 
 		 */		
 		public function updateAnimationState() {
 			
-//			trace(currentAnimationState);
+			//			trace(currentAnimationState);
 			for (var key:String in animationStatesMap) {
 				if(animationStatesMap[key].testFunction() == true) {
 					setAnimationState(key);
 					return;
 				}
 			}
-//			trace("out here", currentAnimationState, (this as PlatformPlayer).inAir);
+			//			trace("out here", currentAnimationState, (this as PlatformPlayer).inAir);
 		}
+		
+		/**
+		 * Convenience function that changes the animation currently visible in the Player. 
+		 * @param newAnimation
+		 * @return 
+		 * 
+		 */		
 		public function swapAnimation(newAnimation: MovieClip) {
 			removeChild(animationHolder);
 			animationHolder = newAnimation;
