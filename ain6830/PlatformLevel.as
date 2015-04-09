@@ -12,7 +12,7 @@
 			super.update();
 			
 			game.player.update();
-			
+			//trace(game.player.forceY);
 			for (var i = 0; i < platforms.length; i++) {
 				Collision.playerAndPlatform(game.player as PlatformPlayer, platforms[i]);
 			}

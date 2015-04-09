@@ -50,6 +50,7 @@
 		private var _xScrollMaxSpeed: Number = 2; //Positive numbers only.
 		private var _yScrollMaxSpeed: Number = 2; 
 		private var playerPosGlobal:Point = new Point(0, 0);
+		private var triggerAreasDead:Array = new Array; //Array holding the trigger areas that need to be removed
 		
 		public static var TRIGGER_AREA_ENTERED: String = "TRIGGER_AREA_ENTERED";
 		public static var TRIGGER_AREA_EXITED: String = "TRIGGER_AREA_EXITED";
@@ -117,7 +118,19 @@
 				updateScroll();
 				checkLimits();
 				
+				var shouldContinue = false;
+				
 				for (var i = 0; i < triggerAreas.length; i++) {
+					shouldContinue = false;
+					for (var j = 0; j < triggerAreasDead.length; j++) {
+						if(triggerAreas[i] == triggerAreasDead[j]) {
+							triggerAreas.splice(i, 1);
+							shouldContinue = true;
+						}
+					}
+					
+					if(shouldContinue) continue;
+					
 					if (game.player.hitTestObject(triggerAreas[i])) {
 						if(triggerAreas[i].isActive == false) {
 							triggerAreas[i].isActive = true;
@@ -261,7 +274,7 @@
 		public function removeTriggerArea(triggerArea: DisplayObject, removeFromDisplayList:Boolean = false):Boolean {
 			for (var i = 0; i < triggerAreas.length; i++) {
 				if(triggerAreas[i] == triggerArea) {
-					triggerAreas.splice(i, 1);
+					triggerAreasDead.push(triggerArea);
 					if(removeFromDisplayList) {
 						removeChild(triggerArea);
 					}
