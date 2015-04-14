@@ -13,6 +13,10 @@ package ain6830
 		var textArray:Array = new Array;
 		protected var currentTextIndex:uint = 0;
 		protected var separator:String = "#";
+		protected var nextKey:uint = Keyboard.RIGHT;
+		protected var prevKey:uint = Keyboard.LEFT;
+		public var nextKeyEnabled:Boolean = true;
+		public var prevKeyEnabled:Boolean = true;
 		
 		public function GameTextDisplay()
 		{
@@ -31,8 +35,10 @@ package ain6830
 		}
 		
 		public function keyUp(e:KeyboardEvent) {
-			if(e.keyCode == Keyboard.SPACE) {
+			if(e.keyCode == nextKey && nextKeyEnabled) {
 				displayNextText();
+			} else if (e.keyCode == prevKey && prevKeyEnabled) {
+				displayPreviousText();
 			}
 		}
 		
@@ -65,7 +71,8 @@ package ain6830
 				textField.text = textArray[currentTextIndex];
 				currentTextIndex--;
 			} else {
-				textField.text = textArray[0];
+				currentTextIndex = 0;
+				textField.text = textArray[currentTextIndex];
 			}
 		}
 		
@@ -75,5 +82,22 @@ package ain6830
 				currentTextIndex = index;
 			}
 		}
+		
+		public function getCurrentTextIndex():uint {
+			return currentTextIndex;
+		}
+		
+		public function numTexts():uint {
+			return textArray.length;
+		}
+		
+		public function setNextKey(key:uint) {
+			nextKey = key;
+		}
+		
+		public function setPrevKey(key:uint) {
+			prevKey = key;
+		}
+		
 	}
 }
