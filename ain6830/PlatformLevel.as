@@ -13,8 +13,18 @@
 			
 			game.player.update();
 			//trace(game.player.forceY);
+			var onGround = false;
 			for (var i = 0; i < platforms.length; i++) {
-				Collision.playerAndPlatform(game.player as PlatformPlayer, platforms[i]);
+				var cSide = Collision.playerAndPlatform(game.player as PlatformPlayer, platforms[i]);
+				if(cSide == Collision.COLLISION_SIDE_BOTTOM) {
+					onGround = true;
+				}
+			}
+			
+			if(!onGround) {
+				if(Math.abs(game.player.vy) > 2) {
+					(game.player as PlatformPlayer).inAir = true;
+				}
 			}
 			
 		}

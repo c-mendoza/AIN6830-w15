@@ -5,6 +5,12 @@
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
+	import flash.text.engine.EastAsianJustifier;
+	
+	import fl.transitions.Transition;
+	import fl.transitions.Tween;
+	import fl.transitions.TweenEvent;
+	import fl.transitions.easing.Regular;
 	
 	/**
 	 * The Level class provides the basic behavior of a level. This class is not meant to be used directly,
@@ -30,8 +36,7 @@
 	public class Level extends MovieClip {
 		public var levelName: String = "default";
 		public var levelDescription: String = "none";
-		public var xScrollEnabled: Boolean = true;
-		public var yScrollEnabled: Boolean = true;
+		public var scrollEnabled: Boolean = true;
 		public var scrollsLeft: Boolean = true;
 		public var scrollsRight: Boolean = true;
 		public var scrollsUp: Boolean = true;
@@ -42,22 +47,24 @@
 		public var limitRight: Boolean = true;
 		public var xScrollTarget: Number = 0.3; //0 to 1. The amount of horizontal screen that the character moves before scrolling
 		public var yScrollTarget: Number = 0.5; //0 to 1. The amount of vertical screen that the character moves before scrolling
+		public var player: Player = null;
+		
+		
+		public static var TRIGGER_AREA_ENTERED: String = "TRIGGER_AREA_ENTERED";
+		public static var TRIGGER_AREA_EXITED: String = "TRIGGER_AREA_EXITED";
+		public static var TRIGGER_AREA_ACTIVE: String = "TRIGGER_AREA_ACTIVE";
 		private var triggerAreas: Array = new Array;
 		private var triggerActions: Array = new Array;
-		public var player: Player = null;
 		private var _game: Game = null;
 		private var isInit: Boolean = false;
 		private var _xScrollMaxSpeed: Number = 2; //Positive numbers only.
 		private var _yScrollMaxSpeed: Number = 2; 
 		private var playerPosGlobal:Point = new Point(0, 0);
 		private var triggerAreasDead:Array = new Array; //Array holding the trigger areas that need to be removed
-		
-		public static var TRIGGER_AREA_ENTERED: String = "TRIGGER_AREA_ENTERED";
-		public static var TRIGGER_AREA_EXITED: String = "TRIGGER_AREA_EXITED";
-		public static var TRIGGER_AREA_ACTIVE: String = "TRIGGER_AREA_ACTIVE";
-		
-		
 		private var _isPaused: Boolean = false;
+		private var levelWidth:Number = 0;
+		private var levelHeight:Number = 0;
+		
 		
 		//add a pause feature
 		
@@ -76,6 +83,7 @@
 		 * 
 		 */		
 		public function addedToStage(e: Event) {
+
 			if (!isInit) {
 				throw new Error("Level added to stage before setting the Game instance! Set the Game instance via the game property of the Level class. " + e.currentTarget);
 			}
@@ -177,8 +185,9 @@
 		 * 
 		 */		
 		public function updateScroll() {
-			//Player's position relative to the screen:
+			if(!scrollEnabled) return;
 			
+			//Player's position relative to the screen:
 			//Screen position normalized (position as 0..1)
 			var xScreenFraction = playerPosGlobal.x / stage.stageWidth;
 			var xDirection = 1;
@@ -203,7 +212,7 @@
 					}
 					
 					//Limit scrolling to the "extents" of the level movie clip
-					if (x <= 0 && x >= -width + stage.stageWidth) {
+					if (x <= 0 && x >= -levelWidth + stage.stageWidth) {
 						//If the screen fraction is greater than the target, then we need to scroll
 						if (xScreenFraction > xScrollTarget) {
 							//This calculates the amount of scrolling we need to do. Since the fraction and the target are both 
@@ -213,7 +222,7 @@
 							if (xShiftAmt > Math.abs(game.player.vx) + _xScrollMaxSpeed) xShiftAmt = Math.abs(game.player.vx) + _xScrollMaxSpeed;
 							x -= xShiftAmt * xDirection;
 							if (x > 0) x = 0;
-							if (x < -width + stage.stageWidth) x = -width + stage.stageWidth;
+							if (x < -levelWidth + stage.stageWidth) x = -levelWidth + stage.stageWidth;
 						}
 					}
 				}
@@ -237,19 +246,94 @@
 						}
 					}
 					
-					if (y <= 0 && y >= -height + stage.stageHeight) {
+					if (y <= 0 && y >= -levelHeight + stage.stageHeight) {
 						if (yScreenFraction > yScrollTarget) {
 							var yShiftAmt = (yScreenFraction - yScrollTarget) * stage.stageHeight;
 							if (yShiftAmt > Math.abs(game.player.vy) + _yScrollMaxSpeed) yShiftAmt = Math.abs(game.player.vy) + _yScrollMaxSpeed;
 							y -= yShiftAmt * yDirection;
 							if (y > 0) y = 0;
-							if (y < -height + stage.stageHeight) y = -height + stage.stageHeight;
+							if (y < -levelHeight + stage.stageHeight) y = -levelHeight + stage.stageHeight;
 						}
 					}
 				}
 				
 			}
 		}
+		
+		/**
+		 * Moves the scrolling view to a particular x y coordinate of the Level.  
+		 * @param xx The x-coordinate of the Level that you want to scroll to.
+		 * @param yy The y-coordinate of the Level that you want to scroll to.
+		 * @param animate Optional parameter. If true, performs an animation via the Tween class instead of immediately jumping to the coordinate.
+		 * @param animationFunction The tweening animation to use.
+		 * @param duration The animation duration, in seconds.
+		 * @param animationCallback An optional function that will be called when the animation completes. The function should have no parameters and return nothing.
+		 * <br><br>
+		 * The scrolling will be limited to the width and height of the Level, so there shouldn't be a danger of
+		 * placing the view somewhere unreachable.
+		 * If <strong>animate</strong> is true, the Level's isPaused property will be set to true. Once the animation completes, isPaused reverts to false.
+		 */
+		public function scrollTo(xx:Number, yy:Number, animate:Boolean = false, animationFunction:Function = null, duration:Number = 1, animationCallback:Function = null):void {
+			var toX = x + (-xx - x);
+			var toY = y + (-yy - y);
+			
+			toX = Math.min(Math.max(-levelWidth + stage.stageWidth, toX), 0);
+			toY = Math.min(Math.max(-levelHeight + stage.stageHeight, toY), 0);
+			
+			if(animate) {
+				if (animationFunction == null) animationFunction = Regular.easeOut;
+				isPaused = true;
+				var xTween:Tween = new Tween(this, "x", animationFunction, x, toX, duration, true);
+				var yTween:Tween = new Tween(this, "y", animationFunction, y, toY, duration, true);
+				
+				xTween.addEventListener(TweenEvent.MOTION_FINISH, function(e:TweenEvent) {
+					isPaused = false;
+					trace("end");
+					if(animationCallback != null) {
+						animationCallback();
+					}
+				});
+					
+			} else {
+				x = toX;
+				y = toY;
+			}
+		}
+
+		/**
+		 * Sets the scrolling capabilities of a level. 
+		 * @param up Boolean. If true, scroll is enabled when player moves up.
+		 * @param down Boolean. If true, scroll is enabled when player moves down.
+		 * @param left Boolean. If true, scroll is enabled when player moves left.
+		 * @param right Boolean. If true, scroll is enabled when player moves right.
+		 * 
+		 * You can change these capabilities during game play. For instance, upon reaching a "boss scene"
+		 * you might want to turn scrolling off. Together with Level::setScreenLimitsPlayerMovement you'll
+		 * be able to "trap" the player in the appropriate part of the map.
+		 * 
+		 */		
+		public function setScrolling(up:Boolean, down:Boolean, left:Boolean, right:Boolean):void {
+			scrollsDown = down;
+			scrollsUp = up;
+			scrollsLeft = left;
+			scrollsRight = right;
+		}
+		
+		/**
+		 * Sets the behavior of the level if the player reaches the edge of the screen. 
+		 * @param top If true, player is not allowed to move past top edge of the screen.
+		 * @param bottom If true, player is not allowed to move past bottom edge of the screen.
+		 * @param left If true, player is not allowed to move past left edge of the screen.
+		 * @param right If true, player is not allowed to move past right edge of the screen.
+		 * 
+		 */		
+		public function setScreenLimitsPlayerMovement(top:Boolean, bottom:Boolean, left:Boolean, right:Boolean):void {
+			limitTop = top;
+			limitBottom = bottom;
+			limitLeft = left;
+			limitRight = right;
+		}
+		
 		/**
 		 * Adds a trigger area to the Level. A trigger area is a DisplayObject that calls a function when the Player
 		 * comes into contact with it. Trigger areas can be used to create hazards, exits, powerups, etc. 
@@ -298,42 +382,7 @@
 			game.player.setX(playerX);
 			game.player.setY(playerY);
 		}
-		
-		/**
-		 * Sets the scrolling capabilities of a level. 
-		 * @param up Boolean. If true, scroll is enabled when player moves up.
-		 * @param down Boolean. If true, scroll is enabled when player moves down.
-		 * @param left Boolean. If true, scroll is enabled when player moves left.
-		 * @param right Boolean. If true, scroll is enabled when player moves right.
-		 * 
-		 * You can change these capabilities during game play. For instance, upon reaching a "boss scene"
-		 * you might want to turn scrolling off. Together with Level::setScreenLimitsPlayerMovement you'll
-		 * be able to "trap" the player in the appropriate part of the map.
-		 * 
-		 */		
-		public function setScrolling(up:Boolean, down:Boolean, left:Boolean, right:Boolean):void {
-			scrollsDown = down;
-			scrollsUp = up;
-			scrollsLeft = left;
-			scrollsRight = right;
-		}
-		
-		/**
-		 * Sets the behavior of the level if the player reaches the edge of the screen. 
-		 * @param top If true, player is not allowed to move past top edge of the screen.
-		 * @param bottom If true, player is not allowed to move past bottom edge of the screen.
-		 * @param left If true, player is not allowed to move past left edge of the screen.
-		 * @param right If true, player is not allowed to move past right edge of the screen.
-		 * 
-		 */		
-		public function setScreenLimitsPlayerMovement(top:Boolean, bottom:Boolean, left:Boolean, right:Boolean):void {
-			limitTop = top;
-			limitBottom = bottom;
-			limitLeft = left;
-			limitRight = right;
-		}
-
-		
+				
 		/**
 		 * Sets the current Game for the Level.
 		 * Adds the Player as a child to this Level.
@@ -341,8 +390,17 @@
 		 */
 		public function set game(g: Game) {
 			_game = g;
-			addChild(g.player);
+			levelWidth = width;
+			levelHeight = height;
 			setup();
+			addChild(g.player);
+			if(g.player.x > levelWidth) {
+				g.player.setX(levelWidth - g.player.width);
+			}
+			if(g.player.y > levelHeight) {
+				g.player.setX(levelHeight - g.player.height);
+			}
+			
 			isInit = true;
 		}
 		

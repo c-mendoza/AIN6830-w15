@@ -1,6 +1,7 @@
 ﻿package ain6830 {
 	
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
@@ -29,7 +30,7 @@
 		public var frictionX: Number = 0.7;
 		public var frictionY: Number = 0.7;
 		public var _baseScale: Number = 1.5;
-		
+		public var controlEnabled:Boolean = true;
 		
 		//Keyboard variables:
 		public var leftArrowDown: Boolean = false;
@@ -49,7 +50,7 @@
 		public static const ANIMATION_STATE_STOP_LEFT: String = "ANIMATION_STATE_STOP_LEFT";
 		public static const ANIMATION_STATE_STOP_RIGHT: String = "ANIMATION_STATE_STOP_RIGHT";
 		
-		//Protected properties:
+		//Public properties, but don't change them. These will be moved to a r/o getter later.
 		public var currentAnimationState: String = "";
 		public var previousAnimationState: String = "";
 		public var prevX: Number = 0;
@@ -62,20 +63,17 @@
 		public var yPos: Number = 0;
 		
 		public var animationHolder: MovieClip = new MovieClip;
-		
+//		public var collisionBox:Sprite = null;
 		private var animationStatesMap:Object = new Object;
-		protected var directionX:int = 1;
-		protected var directionY:int = 1;
+		private var animationStates:Array = new Array;
+		public var directionX:int = 1;
+		public var directionY:int = 1;
 		
 		public function Player() {
 			// constructor code
-			
-			addChild(animationHolder);
-			
-			
+			addChild(animationHolder);			
 			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStage);
-			
 		}
 		
 		function addedToStage(e: Event) {
@@ -98,15 +96,12 @@
 		 * 
 		 */		
 		public function update() {
-			processKeyboard();
+			if(controlEnabled) {
+				processKeyboard();
+			}
 			updatePosition();
 			updateAnimationState();
 		}
-		
-//		public function updateDrawing() {
-//			x = xPos;
-//			y = yPos;
-//		}
 		
 		//You'll want to override these functions in your
 		//subclass:
@@ -251,7 +246,13 @@
 			}
 		}
 		
-		//Changes the current state of the character's animation
+		/**
+		 * Changes the current state of the character's animation. The change is only performed if the
+		 * animationState passed as a parameter is different from the current animation state.
+		 * @param animationState String that identifies the animation state to switch to.
+		 * @return 
+		 * 
+		 */
 		public function setAnimationState(animationState: String) {
 			if (animationState != currentAnimationState) {
 				animationStatesMap[animationState].animationFunction();
@@ -268,11 +269,15 @@
 		 * @param theAnimationFunction A function that is called when the animation state is active.
 		 * @return 
 		 * 
+		 * Registering an animation state that is already registered will result in the overwriting of the previous behavior, which can be useful when
+		 * you want the behavior to change.
 		 * Take a look at the implementation of PlatformPlayer to see usage examples of registerAnimationState. 
 		 * 
 		 */		
-		public function registerAnimationState(animationState:String, theTestFunction:Function, theAnimationFunction:Function) {
-			animationStatesMap[animationState] = {testFunction:theTestFunction, animationFunction:theAnimationFunction};
+		public function registerAnimationState(animationState:String, theTestFunction:Function, theAnimationFunction:Function, thePriority:uint = 0) {
+			animationStatesMap[animationState] = {name:animationState, testFunction:theTestFunction, animationFunction:theAnimationFunction, priority:thePriority};
+			animationStates.push(animationStatesMap[animationState]);
+			animationStates.sortOn("priority", Array.NUMERIC);
 		}
 		
 		/**
@@ -282,7 +287,16 @@
 		 * 
 		 */		
 		public function unregisterAnimationState(animationState:String) {
+			
 			delete animationStatesMap[animationState];
+			//remake the indexed array of animation states:
+			for (var i = 0; i < animationStates.length; i++) {
+				if(animationStates[i].name == animationState) {
+					animationStates.splice(i, 1);
+					break;
+				}
+			}
+			
 		}
 		/**
 		 * Updates the current animation state. Do not override this function. If you want new animation states,
@@ -296,14 +310,20 @@
 		 */		
 		public function updateAnimationState() {
 			
-			//			trace(currentAnimationState);
-			for (var key:String in animationStatesMap) {
-				if(animationStatesMap[key].testFunction() == true) {
-					setAnimationState(key);
-					return;
+//			trace(currentAnimationState);
+			for (var i = 0; i < animationStates.length; i++) {
+				if(animationStates[i].testFunction() == true) {
+					setAnimationState(animationStates[i].name);
 				}
 			}
-			//			trace("out here", currentAnimationState, (this as PlatformPlayer).inAir);
+//			for (var key:String in animationStatesMap) {
+//				if(animationStatesMap[key].testFunction() == true) {
+//					setAnimationState(key);
+//					trace("out here", currentAnimationState, (this as PlatformPlayer).inAir);
+//					return;
+//				}
+//			}
+			
 		}
 		
 		/**

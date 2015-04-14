@@ -140,9 +140,9 @@
 			if (Math.abs(forceY) < 0.2) {
 				forceY = 0;
 				inAir = false;
-			} else if (Math.abs(forceY) > 2){
+			} /*else if (Math.abs(forceY) > 3){
 				inAir = true;
-			}
+			}*/
 
 			//"Drain" the forceAdds:
 			forceXAdd = 0;
