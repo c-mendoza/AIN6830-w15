@@ -154,7 +154,7 @@
 			vx = xPos - prevX;
 			vy = yPos - prevY;
 
-			trace(forceX, forceY, canJump, vx, vy);
+			//trace(forceX, forceY, canJump, vx, vy);
 			x = xPos;
 			y = yPos;
 
