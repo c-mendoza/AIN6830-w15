@@ -378,9 +378,7 @@
 		 * 
 		 */		
 		public function loadNextLevel(nextLevel: Level, playerX: Number, playerY: Number):void {
-			game.currentLevel = nextLevel;
-			game.player.setX(playerX);
-			game.player.setY(playerY);
+			game.loadNextLevel(nextLevel, playerX, playerY);
 		}
 				
 		/**
