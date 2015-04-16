@@ -32,6 +32,26 @@
 		public function addPlatform(p:Platform) {
 			platforms.push(p);
 		}
+		
+		/**
+		 * Removes a platform from the level.
+		 * @param p The platform to remove.
+		 * @param removeFromDisplayList If true, the platform is removed from the display list as well. Defaults to false.
+		 * @return true if it removed a platorm, false if it did not find the platform.
+		 * 
+		 */		
+		public function removePlatform(p:Platform, removeFromDisplayList = false):Boolean {
+			for (var i = 0; i < platforms.length; i++) {
+				if(platforms[i] == p) {
+					platforms.splice(i, 1);
+					if(removeFromDisplayList) {
+						removeChild(p);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 
 	}
 	
