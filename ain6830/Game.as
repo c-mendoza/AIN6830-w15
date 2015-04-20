@@ -1,12 +1,16 @@
 ﻿package ain6830 {
 	
 	import flash.display.MovieClip;
+	import flash.events.Event;
 
 	public class Game extends MovieClip {
 
 		public var player:Player = null;
 		public var score: Number = 0;
 		private var _currentLevel: Level = null;
+		private var _gameWidth: Number = 0;
+		private var _gameHeight: Number = 0;
+		
 		//Other things that could go here:
 		//lives
 		//Things that may have happened already in the game
@@ -16,6 +20,13 @@
 
 		public function Game() {
 			// constructor code
+			
+			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+		}
+		
+		private function addedToStage(e:Event) {
+			_gameWidth = stage.stageWidth;
+			_gameHeight = stage.stageHeight;
 		}
 		
 		/**
@@ -51,9 +62,10 @@
 		 */		
 		public function loadNextLevel(nextLevel: Level, playerX: Number, playerY: Number):void {
 			currentLevel = nextLevel;
-			currentLevel.scrollTo(playerX, playerY);
 			player.setX(playerX);
 			player.setY(playerY);
+			currentLevel.scrollTo(playerX, playerY);
+			
 		}
 		
 		public function get currentLevel(): Level {
@@ -82,6 +94,17 @@
 				player.setY(0);
 			}
 		}
+
+		public function get gameWidth():Number
+		{
+			return _gameWidth;
+		}
+
+		public function get gameHeight():Number
+		{
+			return _gameHeight;
+		}
+
 
 	}
 

@@ -38,8 +38,6 @@
 				myPlayer.frictionX = 0.1;
 				myPlayer.accelerationX =  1.2;
 				myPlayer.accelerationY = 1.2;
-				myPlayer.setX(200);
-				myPlayer.setY(200);
 				myPlayer.jumpForce = -22;
 				myPlayer.gravity = 0.7;
 				

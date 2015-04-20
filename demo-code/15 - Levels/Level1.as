@@ -8,7 +8,7 @@
 	import ain6830.Level;
 	import ain6830.PlatformLevel;
 	
-	import fl.transitions.easing.*;
+	import fl.transitions.easing.Regular;
 
 	public class Level1 extends PlatformLevel {
 
@@ -34,16 +34,18 @@
 			}
 			
 			addTriggerArea(exit);
+			addTriggerArea(bla);
+			bla.addEventListener(Level.TRIGGER_AREA_ENTERED, function(e:Event) {
+				removePlatform(bla, true);
+			});
 			exit.addEventListener(Level.TRIGGER_AREA_ENTERED, exitHit);
 			
-			game.player.setX(800);
-			game.player.setY(900);
 		}
 		
 		override public function addedToStage(e:Event) { 
 			super.addedToStage(e);
 			this.addEventListener(MouseEvent.CLICK, mouseClicked);
-			scrollTo(800, 900);
+			
 		}
 		
 		function keyHit(e:Event) {
@@ -51,7 +53,6 @@
 			game.setOption("HasLevel2DoorKey", true);
 			//setScreenLimitsPlayerMovement(false, false, false, false);
 			scrollTo(exit.x, exit.y, true, Regular.easeInOut, 2, animationEndHandler);
-			
 			key.visible = false;
 			removeTriggerArea(key);
 		}
@@ -59,6 +60,8 @@
 		
 		function animationEndHandler() {
 			scrollTo(game.player.x - 100, game.player.y, true, Regular.easeInOut, 1);
+			game.player.setX(game.player.x);
+			game.player.setY(game.player.y);
 		}
 		
 		function exitHit(e:Event) {

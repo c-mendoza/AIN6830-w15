@@ -274,11 +274,19 @@
 		 * If <strong>animate</strong> is true, the Level's isPaused property will be set to true. Once the animation completes, isPaused reverts to false.
 		 */
 		public function scrollTo(xx:Number, yy:Number, animate:Boolean = false, animationFunction:Function = null, duration:Number = 1, animationCallback:Function = null):void {
-			var toX = x + (-xx - x);
-			var toY = y + (-yy - y);
+			var toGlobalPos:Point = this.localToGlobal(new Point(xx, yy));
 			
-			toX = Math.min(Math.max(-levelWidth + stage.stageWidth, toX), 0);
-			toY = Math.min(Math.max(-levelHeight + stage.stageHeight, toY), 0);
+//			var toX = x + (-xx - x);
+//			var toY = y + (-yy - y);
+			
+//			toX = Math.min(Math.max(-levelWidth + stage.stageWidth, toX), 0);
+//			toY = Math.min(Math.max(-levelHeight + stage.stageHeight, toY), 0);
+			
+			var toX = x - (toGlobalPos.x - (game.gameWidth/2));
+			var toY = y - (toGlobalPos.y -(game.gameHeight/2));
+			
+			toX = Math.min(Math.max(-levelWidth + game.gameWidth, toX), 0);
+			toY = Math.min(Math.max(-levelHeight + game.gameHeight, toY), 0);
 			
 			if(animate) {
 				if (animationFunction == null) animationFunction = Regular.easeOut;
