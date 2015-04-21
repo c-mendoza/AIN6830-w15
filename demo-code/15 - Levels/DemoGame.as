@@ -1,5 +1,5 @@
-﻿package {
-
+package {
+	
 	import flash.display.MovieClip;
 	import flash.text.TextDisplayMode;
 	import flash.ui.Keyboard;
@@ -11,14 +11,18 @@
 	import ain6830.TopDownPlayer;
 	import flash.events.Event;
 	import flash.display.DisplayObject;
+	
+	public class DemoGame extends Game {
+		
+		
+		
+		public function DemoGame() {
 
-	public class MainLevels extends Game {
-
-
-
-		public function MainLevels() {
-			// constructor code
-
+			
+		}
+		
+		override public function setup() {
+			
 			stage.focus = stage;
 			
 			var platformDemo = true;
@@ -43,7 +47,7 @@
 				
 				player = myPlayer;
 				
-				loadNextLevel(new Level1, 200, 200);
+				loadNextLevel(new Level1, 200, 600);
 			} else {
 				var tdPlayer:TopDownPlayer = new TopDownPlayer;
 				tdPlayer.animationRight = new LinkAnimationRight;
@@ -64,25 +68,8 @@
 				loadNextLevel(new Level0, 40, 40);
 				
 			}
-			
-//			var textDisplay:GameTextDisplay = new TextDisplay;
-//			textDisplay.setTextSeparator("#");
-//			textDisplay.loadTextFile("texty.txt");	
-//			
-//			textDisplay.addEventListener(Event.COMPLETE, textDone);
-//			
-//			addChild(textDisplay);
-			//addEventListener(Event.ENTER_FRAME, enterFrameHandler);
-
 		}
-
-//		function textDone(e:Event) {
-//			trace("done!");
-//			removeChild(e.currentTarget as DisplayObject);
-//			
-//		}
-
-
+		
 	}
-
+	
 }

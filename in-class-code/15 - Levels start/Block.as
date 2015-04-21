@@ -13,7 +13,7 @@
 		}
 			
 		public function addedToStage(e:Event) {
-			(parent as MainLevels).addBlock(this);
+			(parent as Main).addBlock(this);
 		}
 	}
 	

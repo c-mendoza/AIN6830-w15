@@ -27,6 +27,17 @@
 		private function addedToStage(e:Event) {
 			_gameWidth = stage.stageWidth;
 			_gameHeight = stage.stageHeight;
+			setup();
+		}
+		
+		/**
+		 * The setup() function is called after the game has been added to the stage.
+		 * Override it to provide custom game initialization. 
+		 * @return 
+		 * 
+		 */		
+		public function setup() {
+			
 		}
 		
 		/**
@@ -61,6 +72,10 @@
 		 * @return nothing.
 		 */		
 		public function loadNextLevel(nextLevel: Level, playerX: Number, playerY: Number):void {
+			if(stage == null) {
+				throw new Error("Game must be added to the stage before calling the loadNextLevel function");
+				return;
+			}
 			currentLevel = nextLevel;
 			player.setX(playerX);
 			player.setY(playerY);
