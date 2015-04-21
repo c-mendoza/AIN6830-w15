@@ -96,14 +96,14 @@
 				removeChild(_currentLevel);
 				_currentLevel = l;
 				_currentLevel.game = this;				
-				addChild(_currentLevel);
+				addChildAt(_currentLevel, 0);
 				currentLevel.scrollTo(0, 0);
 				player.setX(0);
 				player.setY(0);
 			} else {
 				_currentLevel = l;
 				_currentLevel.game = this;				
-				addChild(_currentLevel);	
+				addChildAt(_currentLevel, 0);	
 				currentLevel.scrollTo(0, 0);
 				player.setX(0);
 				player.setY(0);
