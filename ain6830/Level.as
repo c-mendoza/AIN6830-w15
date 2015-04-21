@@ -64,6 +64,7 @@
 		private var _isPaused: Boolean = false;
 		private var levelWidth:Number = 0;
 		private var levelHeight:Number = 0;
+		private var isUnloaded:Boolean = false;
 		
 		
 		//add a pause feature
@@ -94,6 +95,7 @@
 		}
 		
 		public function removedFromStage(e: Event) {
+			isUnloaded = true;
 			removeEventListener(Event.ENTER_FRAME, enterFrame);
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
@@ -139,6 +141,8 @@
 					
 					if(shouldContinue) continue;
 					
+					if(isUnloaded) return;
+					
 					if (game.player.hitTestObject(triggerAreas[i])) {
 						if(triggerAreas[i].isActive == false) {
 							triggerAreas[i].isActive = true;
@@ -179,6 +183,9 @@
 			//trace("WARNING: Level:update() should be overriden!");
 		}
 		
+//		public function tearDown() {
+//			for
+//		}
 		/**
 		 * Updates map scrolling. You should not have to call this function directly. 
 		 * @return 
