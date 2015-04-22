@@ -8,7 +8,7 @@
 		public function Platform() {
 			// constructor code
 			
-			addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+			addEventListener(Event.ADDED, addedToStage);
 		}
 		
 		function addedToStage(e:Event) {

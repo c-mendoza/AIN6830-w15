@@ -69,8 +69,16 @@
 			
 			registerAnimationState(ANIMATION_STATE_JUMP_RIGHT, function():Boolean {
 				//trace("inAir in anon", inAir, vy);
-				if(inAir == true && directionX == 1) {
-					return true;
+				if(inAir == true) {
+					if( (currentAnimationState == ANIMATION_STATE_RIGHT) || 
+						(currentAnimationState == ANIMATION_STATE_STOP_RIGHT)) {
+						return true;
+					} else {
+						if(vx > 0) {
+							return true;
+						}
+					}
+					//return true;
 				}
 				return false;
 			}, function() {
@@ -80,8 +88,15 @@
 			
 			registerAnimationState(ANIMATION_STATE_JUMP_LEFT, function():Boolean {
 				//trace("inAir in anon", inAir, vy);
-				if(inAir == true && directionX == -1) {
-					return true;
+				if(inAir == true) {
+					if( (currentAnimationState == ANIMATION_STATE_LEFT) || 
+						(currentAnimationState == ANIMATION_STATE_STOP_LEFT)) {
+						return true;
+					} else {
+						if(vx < 0) {
+							return true;
+						}
+					}
 				}
 				return false;
 			}, function() {

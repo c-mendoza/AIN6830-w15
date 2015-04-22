@@ -46,8 +46,8 @@
 					platforms.splice(i, 1);
 					if(removeFromDisplayList) {
 						removeChild(p);
-						return true;
 					}
+					return true;
 				}
 			}
 			return false;

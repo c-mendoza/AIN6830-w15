@@ -66,8 +66,8 @@
 //		public var collisionBox:Sprite = null;
 		private var animationStatesMap:Object = new Object;
 		private var animationStates:Array = new Array;
-		public var directionX:int = 1;
-		public var directionY:int = 1;
+		protected var _currentDirection: Number = 0; //In degrees.
+
 		
 		public function Player() {
 			// constructor code
@@ -100,6 +100,7 @@
 				processKeyboard();
 			}
 			updatePosition();
+			updateDirection();
 			updateAnimationState();
 		}
 		
@@ -178,11 +179,11 @@
 				accelY = 0;
 			}
 			
-			if (accelX > 0) {
-				directionX = 1;
-			} else if (accelX < 0) {
-				directionX = -1;
-			}
+//			if (accelX > 0) {
+//				directionX = 1;
+//			} else if (accelX < 0) {
+//				directionX = -1;
+//			}
 			//			trace(directionX);
 		}
 		
@@ -198,6 +199,7 @@
 			vx = xPos - prevX;
 			vy = yPos - prevY;
 			
+			
 			if (Math.abs(vx) < 0.1) {
 				vx = 0;
 				accelX = 0;
@@ -212,6 +214,28 @@
 			y = yPos;
 			
 			//trace("vx:", vx, "accelX:", accelX, "xpos:", xPos, "prevX:", prevX);	
+		}
+		
+		protected function updateDirection() {
+			var absVx = Math.abs(vx);
+			var absVy = Math.abs(vy);
+			
+			var angleRadians: Number = Math.atan2(vy, vx) + (Math.PI/2);
+			var angleDegrees: Number = angleRadians * 180 / Math.PI;
+			
+			
+			if(absVx > 0 || absVy > 0) {
+				if(angleDegrees < 0) {
+					angleDegrees += 360;
+				}
+				_currentDirection = angleDegrees;
+			}
+			
+//			trace(_currentDirection);
+			
+//			if(absVx > 0) {
+//				if(absVx > absVy
+//			}
 		}
 		
 		/**
@@ -298,6 +322,7 @@
 			}
 			
 		}
+		
 		/**
 		 * Updates the current animation state. Do not override this function. If you want new animation states,
 		 * use registerAnimationState to do so.
@@ -407,6 +432,12 @@
 		public function get baseScale(): Number {
 			return _baseScale;
 		}
+
+		public function get currentDirection():Number
+		{
+			return _currentDirection;
+		}
+
 		
 		//		override public function set x(newX:Number): void {
 		//			setX(newX);

@@ -15,8 +15,6 @@ package ain6830
 		
 		public function TopDownPlayer()
 		{
-//			animationHolder = animationRight;
-//			addChild(animationHolder)
 			super();
 			registerAnimationState(ANIMATION_STATE_STOP_LEFT, function():Boolean {
 				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
@@ -28,7 +26,7 @@ package ain6830
 			}, animateStopLeft);
 			registerAnimationState(ANIMATION_STATE_STOP_RIGHT, function():Boolean {
 				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionX == 1) {
+					if ((currentDirection > 0 && currentDirection < 180)) {
 						return true;
 					}
 				}
@@ -36,7 +34,7 @@ package ain6830
 			}, animateStopRight);
 			registerAnimationState(ANIMATION_STATE_STOP_UP, function():Boolean {
 				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionY == -1) {
+					if (currentDirection < 90 || currentDirection > 270) {
 						return true;
 					}
 				}
@@ -45,7 +43,7 @@ package ain6830
 			
 			registerAnimationState(ANIMATION_STATE_STOP_DOWN, function():Boolean {
 				if (Math.abs(accelX) == 0 && Math.abs(accelY) == 0) {
-					if (directionY == 1) {
+					if (currentDirection > 90 && currentDirection < 270) {
 						return true;
 					}
 				}
@@ -54,32 +52,28 @@ package ain6830
 			
 			
 			registerAnimationState(ANIMATION_STATE_RIGHT, function():Boolean {
-				if (Math.abs(accelX) > Math.abs(accelY) && accelX > 0) {
+				if (currentDirection >=45 && currentDirection <=135 && vx > 0) {
 					return true;
 				} else {
 					return false;
 				}
-			}, animateRight);
+			}, animateRight, 10);
 			registerAnimationState(ANIMATION_STATE_LEFT, function():Boolean {
-				if (Math.abs(accelX) > Math.abs(accelY) && accelX < 0) {
+				if (currentDirection >=225 && currentDirection <=315 && vx < 0) {
 					return true;
 				} else {
 					return false;
 				}
-			}, animateLeft);
+			}, animateLeft, 10);
 			registerAnimationState(ANIMATION_STATE_DOWN, function():Boolean {
-				if (Math.abs(accelX) < Math.abs(accelY)) {
-					if (accelY > 0) {
+				if (currentDirection >135 && currentDirection <225 && vy > 0) {
 						return true;
-					}
 				}
 				return false;
 			}, animateDown);
 			registerAnimationState(ANIMATION_STATE_UP, function():Boolean {
-				if (Math.abs(accelX) < Math.abs(accelY)) {
-					if (accelY < 0) {
+				if ((currentDirection > 315 || currentDirection < 45) && vy < 0) {
 						return true;
-					}
 				}
 				return false;
 			}, animateUp);	

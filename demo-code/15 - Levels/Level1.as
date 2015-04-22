@@ -19,7 +19,8 @@
 			xScrollTarget = 0.4;
 			isPaused = false;
 			setScrolling(true, true, true, true);
-			setScreenLimitsPlayerMovement(true, true, true, true);			
+			setScreenLimitsPlayerMovement(true, true, true, true);		
+			
 		}
 
 		override public function setup() {
@@ -55,6 +56,7 @@
 			scrollTo(exit.x, exit.y, true, Regular.easeInOut, 2, animationEndHandler);
 			key.visible = false;
 			removeTriggerArea(key);
+			trace(platforms);
 		}
 		
 		

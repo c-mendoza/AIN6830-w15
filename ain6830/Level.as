@@ -405,7 +405,6 @@
 			_game = g;
 			levelWidth = width;
 			levelHeight = height;
-			setup();
 			addChild(g.player);
 			if(g.player.x > levelWidth) {
 				g.player.setX(levelWidth - g.player.width);
@@ -415,6 +414,7 @@
 			}
 			
 			isInit = true;
+			setup();
 		}
 		
 		public function get game(): Game {

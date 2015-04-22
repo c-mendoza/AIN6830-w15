@@ -58,10 +58,8 @@ package {
 				tdPlayer.animationStopRight = new LinkAnimationStopRight;
 				
 				tdPlayer.baseScale = 2;
-				tdPlayer.frictionX = 0.5;
+				tdPlayer.frictionX = tdPlayer.frictionY = 0.9;
 				tdPlayer.accelerationX = tdPlayer.accelerationY =  1.2;
-				tdPlayer.setX(200);
-				tdPlayer.setY(200);
 				
 				player = tdPlayer;
 				
