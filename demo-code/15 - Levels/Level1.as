@@ -81,7 +81,7 @@
 			
 			t.addEventListener(TweenEvent.MOTION_FINISH, function(e:TweenEvent) {
 				 var tt = new Tween(mover, "y", Sine.easeInOut, mover.y, mover.y - 100, 1, true);
-				 trace(mover);
+//				 trace(mover);
 				 tt.addEventListener(TweenEvent.MOTION_FINISH, function(e:TweenEvent) {
 					 movePlatform();
 				 });
@@ -95,13 +95,11 @@
 		}
 		
 		function keyHit(e:Event) {
-			trace(e.type);
 			game.setOption("HasLevel2DoorKey", true);
 			//setScreenLimitsPlayerMovement(false, false, false, false);
 			scrollTo(exit.x, exit.y, true, Regular.easeInOut, 2, animationEndHandler);
 			key.visible = false;
 			removeTriggerArea(key);
-			trace(platforms);
 		}
 		
 		
