@@ -12,7 +12,6 @@
 			super.update();
 			
 			game.player.update();
-			//trace(game.player.forceY);
 			var onGround = false;
 			for (var i = 0; i < platforms.length; i++) {
 				var cSide = Collision.playerAndPlatform(game.player as PlatformPlayer, platforms[i]);
@@ -20,7 +19,8 @@
 					onGround = true;
 				}
 			}
-			
+//			trace((game.player as PlatformPlayer).vy, (game.player as PlatformPlayer).forceY);
+				
 			if(!onGround) {
 				if(Math.abs(game.player.vy) > 2) {
 					(game.player as PlatformPlayer).inAir = true;

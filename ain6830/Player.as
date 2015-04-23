@@ -374,9 +374,9 @@
 		
 		public function setY(newY: Number) {
 			//prevY = newY + vy;
-			prevY = newY;
+			prevY = y;
 			yPos = newY;
-			vy = 0;
+			//vy = 0;
 			y = yPos;
 		}
 		

@@ -239,6 +239,7 @@
 			var yScreenFraction = playerPosGlobal.y / stage.stageHeight;
 			
 			if (scrollsUp||scrollsDown) {
+//				trace("in scroll", game.player.vy);
 				if (Math.abs(game.player.vy) > 0) {
 					if (game.player.vy < 0) {
 						if(scrollsUp) {

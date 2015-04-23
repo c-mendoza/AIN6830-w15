@@ -1,6 +1,6 @@
 ﻿package ain6830 {
 	
-	import flash.display.*;
+	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	
 	//Class Collision
@@ -122,28 +122,34 @@
 						if (dx < 0) { //Collision on right
 							oy = 0;
 							collisionSide = COLLISION_SIDE_LEFT;
+//							player.addForceX(-player.forceX);
 							player.setX(player.x + ox);
-							player.addForceX(-player.forceX);
 						} else { //Collision on left
 							oy = 0;
 							ox *= -1;
 							collisionSide = COLLISION_SIDE_RIGHT;
+//							player.addForceX(-player.forceX);
 							player.setX(player.x + ox);
-							player.addForceX(-player.forceX);
 						}
 					} else {
 						if (dy < 0) { //Collision on Top
 							ox = 0;
 							collisionSide = COLLISION_SIDE_TOP;
+//							player.addForceY(-player.forceY);
 							player.setY(player.y + oy);
-							player.addForceY(-player.forceY);
+//							trace("top");
 						} else { //Collision on Bottom
 							if(player.vy >= 0) {
 								ox = 0;
 								oy *= -1;
 								collisionSide = COLLISION_SIDE_BOTTOM;
 								player.setY(player.y + oy);
-								player.addForceY(-player.forceY);
+								if(platform is MovingPlatform) {
+									//player.addForceY(player.gravity*4);
+									trace("here", player.vy);
+									player.setY(player.y + 3);
+									player.addForceY(3);
+								}
 								player.canJump = true;
 								player.inAir = false;
 							}
