@@ -26,12 +26,13 @@ package ain6830
 		}
 		
 		public function addedToStage(e:Event) {
-			//			stage.focus = this;
+			stage.focus = this;
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 		}
 		
 		public function removedFromStage(e:Event) {
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
+			stage.focus = stage.
 		}
 		
 		public function keyUp(e:KeyboardEvent) {
@@ -49,7 +50,15 @@ package ain6830
 		public function loadTextFile(url:String) {
 			var loader:URLLoader = new URLLoader;
 			loader.addEventListener(Event.COMPLETE, loadingComplete);
-			loader.load(new URLRequest(url));
+			try
+			{
+				loader.load(new URLRequest(url));
+
+			} 
+			catch(error:Error) 
+			{
+				trace(error);
+			}
 		}
 		
 		public function loadingComplete(e:Event) {
