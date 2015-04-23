@@ -1,14 +1,21 @@
 ﻿package {
 
+	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
+	import ain6830.GameTextDisplay;
 	import ain6830.Level;
 	import ain6830.PlatformLevel;
 	
+	import fl.motion.MotionEvent;
+	import fl.motion.easing.Sine;
+	import fl.transitions.Tween;
+	import fl.transitions.TweenEvent;
 	import fl.transitions.easing.Regular;
+	import fl.transitions.easing.Strong;
 
 	public class Level1 extends PlatformLevel {
 
@@ -16,14 +23,16 @@
 		public function Level1() {
 			// constructor code
 			trace("Level 1 Constructor");
-			xScrollTarget = 0.4;
-			isPaused = false;
-			setScrolling(true, true, true, true);
-			setScreenLimitsPlayerMovement(true, true, true, true);		
 			
 		}
 
 		override public function setup() {
+			isPaused = true;
+			xScrollTarget = 0.4;
+			setScrolling(true, true, true, true);
+			setScreenLimitsPlayerMovement(true, true, true, true);		
+
+			
 			game.createOption("HasLevel2DoorKey", false);
 
 			
@@ -41,6 +50,42 @@
 			});
 			exit.addEventListener(Level.TRIGGER_AREA_ENTERED, exitHit);
 			
+			movePlatform();
+			
+			//Text Display:
+			var textDisplay:GameTextDisplay = new TextDisplay;
+			textDisplay.setTextSeparator("#");
+			textDisplay.loadTextFile("texty.txt");	
+			
+			textDisplay.addEventListener(Event.COMPLETE, textDone);
+			textDisplay.closeButton.addEventListener(MouseEvent.CLICK, closeClicked);
+			game.addChild(textDisplay);
+			
+			textDisplay.x = game.gameWidth / 2;
+			textDisplay.y = game.gameHeight / 2;
+			
+		}
+		
+		function textDone(e:Event) {
+			game.removeChild(e.currentTarget as DisplayObject);
+			isPaused = false;
+		}
+		
+		function closeClicked(e:MouseEvent) {
+			game.removeChild(e.currentTarget.parent as DisplayObject);
+			isPaused = false;
+		}
+		
+		function movePlatform() {
+			var t:Tween = new Tween(mover, "y", Sine.easeInOut, mover.y, mover.y + 100, 1, true);
+			
+			t.addEventListener(TweenEvent.MOTION_FINISH, function(e:TweenEvent) {
+				 var tt = new Tween(mover, "y", Sine.easeInOut, mover.y, mover.y - 100, 1, true);
+				 trace(mover);
+				 tt.addEventListener(TweenEvent.MOTION_FINISH, function(e:TweenEvent) {
+					 movePlatform();
+				 });
+			});
 		}
 		
 		override public function addedToStage(e:Event) { 
