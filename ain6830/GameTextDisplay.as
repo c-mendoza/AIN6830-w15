@@ -1,4 +1,4 @@
-package ain6830
+﻿package ain6830
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -32,7 +32,7 @@ package ain6830
 		
 		public function removedFromStage(e:Event) {
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
-			stage.focus = stage.
+			stage.focus = stage
 		}
 		
 		public function keyUp(e:KeyboardEvent) {
