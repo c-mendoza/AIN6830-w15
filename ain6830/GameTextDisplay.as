@@ -15,8 +15,10 @@
 		protected var separator:String = "#";
 		protected var nextKey:uint = Keyboard.RIGHT;
 		protected var prevKey:uint = Keyboard.LEFT;
+		protected var endKey:uint = Keyboard.ESCAPE;
 		public var nextKeyEnabled:Boolean = true;
 		public var prevKeyEnabled:Boolean = true;
+		public var endKeyEnabled:Boolean = true;
 		
 		public function GameTextDisplay()
 		{
@@ -40,6 +42,8 @@
 				displayNextText();
 			} else if (e.keyCode == prevKey && prevKeyEnabled) {
 				displayPreviousText();
+			} else if (e.keyCode == endKey && endKeyEnabled) {
+				dispatchEvent(new Event(Event.COMPLETE));
 			}
 		}
 		
@@ -100,12 +104,34 @@
 			return textArray.length;
 		}
 		
+		/**
+		 * Change the keyboard key that displays the next piece of text. 
+		 * @param key Use the Keyboard constants! Example: Keyboard.RIGHT, Keyboard.A, etc.
+		 * @return 
+		 * 
+		 */		
 		public function setNextKey(key:uint) {
 			nextKey = key;
 		}
 		
+		/**
+		 * Change the keyboard key that displays the previous piece of text. 
+		 * @param key Use the Keyboard constants! Example: Keyboard.RIGHT, Keyboard.A, etc.
+		 * @return 
+		 * 
+		 */		
 		public function setPrevKey(key:uint) {
 			prevKey = key;
+		}
+		
+		/**
+		 * Change the keyboard key that triggers Event.COMPLETE. 
+		 * @param key Use the Keyboard constants! Example: Keyboard.RIGHT, Keyboard.A, etc.
+		 * @return 
+		 * 
+		 */		
+		public function setEndKey(key:uint) {
+			endKey = key;
 		}
 		
 	}
