@@ -301,7 +301,7 @@
 		public function registerAnimationState(animationState:String, theTestFunction:Function, theAnimationFunction:Function, thePriority:uint = 0) {
 			animationStatesMap[animationState] = {name:animationState, testFunction:theTestFunction, animationFunction:theAnimationFunction, priority:thePriority};
 			animationStates.push(animationStatesMap[animationState]);
-			animationStates.sortOn("priority", Array.NUMERIC);
+			animationStates.sortOn("priority", Array.DESCENDING | Array.NUMERIC);
 		}
 		
 		/**
@@ -339,6 +339,7 @@
 			for (var i = 0; i < animationStates.length; i++) {
 				if(animationStates[i].testFunction() == true) {
 					setAnimationState(animationStates[i].name);
+					return;
 				}
 			}
 //			for (var key:String in animationStatesMap) {
