@@ -124,8 +124,8 @@
 			if(!isPaused) {
 				playerPosGlobal = localToGlobal(new Point(game.player.x, game.player.y));
 				
-				update();
 				updateScroll();
+				update();
 				checkLimits();
 				
 				var shouldContinue = false;
@@ -304,7 +304,7 @@
 				
 				xTween.addEventListener(TweenEvent.MOTION_FINISH, function(e:TweenEvent) {
 					isPaused = false;
-					trace("end");
+					//trace("end");
 					if(animationCallback != null) {
 						animationCallback();
 					}

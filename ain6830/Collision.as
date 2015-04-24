@@ -144,11 +144,21 @@
 								oy *= -1;
 								collisionSide = COLLISION_SIDE_BOTTOM;
 								player.setY(player.y + oy);
+								//Super kludge to make moving platforms behave
 								if(platform is MovingPlatform) {
-									//player.addForceY(player.gravity*4);
-									trace("here", player.vy);
 									player.setY(player.y + 3);
 									player.addForceY(3);
+									//Here be the kludge, so that the camera tracks the player:
+									player.vy = (platform as MovingPlatform).vy;
+									
+									
+//									player.setX(player.x + (platform as MovingPlatform).vx);
+									player.addForceX((platform as MovingPlatform).vx * (player.frictionX));
+//									var xForce = (platform as MovingPlatform).vx - player.forceX - (player.frictionX * player.vx);
+//									trace(xForce);
+//									player.addForceX(xForce);
+//									player.vx = (platform as MovingPlatform).vx;
+									
 								}
 								player.canJump = true;
 								player.inAir = false;

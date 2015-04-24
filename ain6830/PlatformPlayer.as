@@ -146,7 +146,7 @@
 			prevX = xPos;
 			prevY = yPos;
 
-			forceX += accelX - (frictionX * vx) + forceXAdd;
+			forceX += accelX + (-frictionX * vx) + forceXAdd;
 			forceY += accelY + gravity + forceYAdd;
 
 			if (Math.abs(forceX) < 0.1) {
@@ -169,7 +169,7 @@
 			vx = xPos - prevX;
 			vy = yPos - prevY;
 
-			//trace(forceX, forceY, canJump, vx, vy);
+//			trace("forcex", forceX, "vx", vx);
 			x = xPos;
 			y = yPos;
 

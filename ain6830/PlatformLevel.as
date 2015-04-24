@@ -18,6 +18,10 @@
 				if(cSide == Collision.COLLISION_SIDE_BOTTOM) {
 					onGround = true;
 				}
+				if(platforms[i] is MovingPlatform) {
+					(platforms[i] as MovingPlatform).update();
+				}
+				
 			}
 //			trace((game.player as PlatformPlayer).vy, (game.player as PlatformPlayer).forceY);
 				
