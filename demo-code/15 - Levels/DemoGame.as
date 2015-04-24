@@ -47,7 +47,7 @@ package {
 				
 				player = myPlayer;
 				
-				loadNextLevel(new Level1, 200, 600);
+				loadNextLevel(new Level1, 200, 400);
 			} else {
 				var tdPlayer:TopDownPlayer = new TopDownPlayer;
 				tdPlayer.animationRight = new LinkAnimationRight;

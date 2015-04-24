@@ -1,4 +1,6 @@
-The adventure is about to start!#
+You can advance the text by pressing the right arrow, and go back with the left arrow.
+You can close this window by pressing the "esc" key.#
+You can change these defaults if you want, take a look at the GameDisplayText class.#
 This is quite an adventure!!#
 Can you feel the excitement?!#
 Last bit of excitement!#
